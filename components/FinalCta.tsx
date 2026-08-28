@@ -1,8 +1,6 @@
-interface FinalCtaProps {
-  onRegisterClick: (ref?: React.RefObject<HTMLButtonElement | null>) => void;
-}
+import RegisterButton from "./RegisterButton";
 
-export default function FinalCta({ onRegisterClick }: FinalCtaProps) {
+export default function FinalCta() {
   return (
     <section className="final-cta">
       <div className="wrap">
@@ -11,12 +9,7 @@ export default function FinalCta({ onRegisterClick }: FinalCtaProps) {
         </span>
         <h2>Register free — take your seat</h2>
         <p>Free to attend · 80 live seats · Live Online</p>
-        <button
-          className="btn btn-primary js-register"
-          onClick={(e) => onRegisterClick({ current: e.currentTarget })}
-        >
-          Register free — save your seat
-        </button>
+        <RegisterButton>Register free — save your seat</RegisterButton>
       </div>
     </section>
   );

@@ -11,6 +11,7 @@ export interface FormErrors {
   email?: string;
   phone?: string;
   role?: string;
+  form?: string;
 }
 
 export const ALLOWED_ROLES = [
@@ -79,7 +80,7 @@ export function validateRole(value: string): string {
 
 export interface SubmissionResult {
   success: boolean;
-  status: "BACKEND_NOT_CONFIGURED" | "SPAM_DETECTED" | "SUCCESS";
+  status: "BACKEND_NOT_CONFIGURED" | "SPAM_DETECTED" | "UNEXPECTED_ERROR";
   message: string;
 }
 

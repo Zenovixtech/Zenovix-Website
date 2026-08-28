@@ -1,10 +1,7 @@
 import Image from "next/image";
+import RegisterButton from "./RegisterButton";
 
-interface HeaderProps {
-  onRegisterClick: (ref?: React.RefObject<HTMLButtonElement | null>) => void;
-}
-
-export default function Header({ onRegisterClick }: HeaderProps) {
+export default function Header() {
   return (
     <header>
       <div className="wrap nav">
@@ -22,12 +19,7 @@ export default function Header({ onRegisterClick }: HeaderProps) {
             priority
           />
         </a>
-        <button
-          className="btn btn-primary js-register"
-          onClick={(e) => onRegisterClick({ current: e.currentTarget })}
-        >
-          Register free
-        </button>
+        <RegisterButton>Register free</RegisterButton>
       </div>
     </header>
   );

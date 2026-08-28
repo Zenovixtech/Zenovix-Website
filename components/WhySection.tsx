@@ -1,8 +1,6 @@
-interface WhySectionProps {
-  onRegisterClick: (ref?: React.RefObject<HTMLButtonElement | null>) => void;
-}
+import RegisterButton from "./RegisterButton";
 
-export default function WhySection({ onRegisterClick }: WhySectionProps) {
+export default function WhySection() {
   return (
     <section className="section why">
       <div className="wrap">
@@ -40,12 +38,7 @@ export default function WhySection({ onRegisterClick }: WhySectionProps) {
           </div>
         </div>
         <div className="center-cta">
-          <button
-            className="btn btn-primary js-register"
-            onClick={(e) => onRegisterClick({ current: e.currentTarget })}
-          >
-            Register free — save your seat
-          </button>
+          <RegisterButton>Register free — save your seat</RegisterButton>
           <p>Free live workshop · Limited to 80 seats</p>
         </div>
       </div>

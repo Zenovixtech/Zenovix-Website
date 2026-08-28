@@ -1,10 +1,7 @@
 import Image from "next/image";
+import RegisterButton from "./RegisterButton";
 
-interface ToolkitSectionProps {
-  onRegisterClick: (ref?: React.RefObject<HTMLButtonElement | null>) => void;
-}
-
-export default function ToolkitSection({ onRegisterClick }: ToolkitSectionProps) {
+export default function ToolkitSection() {
   return (
     <section className="section toolkit">
       <div className="wrap">
@@ -68,12 +65,7 @@ export default function ToolkitSection({ onRegisterClick }: ToolkitSectionProps)
           </article>
         </div>
         <div className="center-cta">
-          <button
-            className="btn btn-primary js-register"
-            onClick={(e) => onRegisterClick({ current: e.currentTarget })}
-          >
-            Register free — save your seat
-          </button>
+          <RegisterButton>Register free — save your seat</RegisterButton>
           <p style={{ color: "rgba(255, 255, 255, 0.55)" }}>
             Free · Live cohort · 80 seats · Live Online
           </p>

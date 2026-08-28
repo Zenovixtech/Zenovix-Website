@@ -128,7 +128,7 @@ export default function RegistrationModal({
     setFormData((prev) => ({ ...prev, [name]: processedValue }));
 
     // Real-time validation clearance
-    if (errors[name as keyof FormErrors]) {
+    if (errors[name as keyof FormErrors] || errors.form) {
       let fieldError = "";
       if (name === "fullName") fieldError = validateFullName(processedValue);
       if (name === "email") fieldError = validateEmail(processedValue);
@@ -138,6 +138,7 @@ export default function RegistrationModal({
       setErrors((prev) => ({
         ...prev,
         [name]: fieldError,
+        form: "",
       }));
     }
   };
@@ -161,6 +162,7 @@ export default function RegistrationModal({
       email: emailErr,
       phone: phoneErr,
       role: roleErr,
+      form: "",
     };
 
     setErrors(newErrors);
@@ -171,7 +173,7 @@ export default function RegistrationModal({
       phone: cleanedPhone,
     }));
 
-    // If any error exists, focus the first invalid field
+    // If any field error exists, focus the first invalid field
     if (nameErr) {
       nameInputRef.current?.focus();
       return;
@@ -192,7 +194,7 @@ export default function RegistrationModal({
     // Submit form
     setIsSubmitting(true);
     try {
-      await submitRegistration({
+      const result = await submitRegistration({
         fullName: cleanedName,
         email: cleanedEmail,
         phone: cleanedPhone,
@@ -200,10 +202,29 @@ export default function RegistrationModal({
         website_hp: formData.website_hp,
       });
 
-      // Show local UI demo success view
-      setIsSuccessView(true);
-    } catch {
-      // Error handling if any
+      if (result.status === "BACKEND_NOT_CONFIGURED") {
+        // Show local UI demo success view
+        setIsSuccessView(true);
+      } else if (result.status === "SPAM_DETECTED") {
+        // Never show success view for spam
+        setErrors((prev) => ({
+          ...prev,
+          form: "Submission failed. Please check your inputs and try again.",
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          form: result.message || "Submission failed. Please try again.",
+        }));
+      }
+    } catch (err: unknown) {
+      // Do not silently swallow errors - display visible form-level error
+      const errorMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred during submission.";
+      setErrors((prev) => ({
+        ...prev,
+        form: errorMessage,
+      }));
     } finally {
       setIsSubmitting(false);
     }
@@ -251,6 +272,12 @@ export default function RegistrationModal({
                   onChange={handleInputChange}
                 />
               </div>
+
+              {errors.form && (
+                <p className="error" id="formError" aria-live="polite" style={{ marginBottom: "10px" }}>
+                  {errors.form}
+                </p>
+              )}
 
               <div className="field">
                 <label htmlFor="fullName">Full name *</label>

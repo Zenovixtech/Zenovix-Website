@@ -23,8 +23,13 @@ const spaceMono = Space_Mono({
   display: "swap",
 });
 
+// Safe deployment URL resolution (resolves only if an environment variable exists)
+const deploymentUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : process.env.NEXT_PUBLIC_APP_URL;
+
 export const metadata: Metadata = {
-  metadataBase: new URL("http://localhost:3000"),
+  ...(deploymentUrl ? { metadataBase: new URL(deploymentUrl) } : {}),
   title: "Zenovix Technologie — Master Excel with AI",
   description:
     "A practical live workshop to clean data, build dashboards, and automate Excel reporting with AI.",

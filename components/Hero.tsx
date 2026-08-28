@@ -1,10 +1,7 @@
 import Image from "next/image";
+import RegisterButton from "./RegisterButton";
 
-interface HeroProps {
-  onRegisterClick: (ref?: React.RefObject<HTMLButtonElement | null>) => void;
-}
-
-export default function Hero({ onRegisterClick }: HeroProps) {
+export default function Hero() {
   return (
     <section className="hero" id="top">
       <div className="wrap hero-grid">
@@ -29,12 +26,7 @@ export default function Hero({ onRegisterClick }: HeroProps) {
             <span>Live Online</span>
           </div>
           <div className="hero-actions">
-            <button
-              className="btn btn-primary js-register"
-              onClick={(e) => onRegisterClick({ current: e.currentTarget })}
-            >
-              Register free — save your seat
-            </button>
+            <RegisterButton>Register free — save your seat</RegisterButton>
             <span className="seat-note">100% free · Limited to 80 seats</span>
           </div>
         </div>
