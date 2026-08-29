@@ -10,7 +10,7 @@ export default function Footer() {
             src="/images/zenovix-technologie-logo-white.png"
             alt="Zenovix Technologie"
             width={180}
-            height={42}
+            height={44}
           />
         </a>
         <p>AI + Excel live workshop</p>

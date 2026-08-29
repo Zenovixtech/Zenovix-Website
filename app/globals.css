@@ -211,7 +211,7 @@ header {
   background: #fff;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
   transition: 0.25s ease;
-  padding: 4px 14px;
+  padding: 3px 12px;
 }
 
 .brand-logo-link:hover {
@@ -223,7 +223,7 @@ header {
 .brand-logo {
   display: block;
   width: auto;
-  height: 42px;
+  height: 44px;
   max-width: 180px;
   object-fit: contain;
   background: #fff;

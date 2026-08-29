@@ -15,7 +15,7 @@ export default function Header() {
             src="/images/zenovix-technologie-logo-white.png"
             alt="Zenovix Technologie"
             width={180}
-            height={42}
+            height={44}
             priority
           />
         </a>
