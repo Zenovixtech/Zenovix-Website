@@ -34,8 +34,8 @@ export const metadata: Metadata = {
   description:
     "A practical live workshop to clean data, build dashboards, and automate Excel reporting with AI.",
   icons: {
-    icon: "/images/zenovix-technologies-logo-white.png",
-    apple: "/images/zenovix-technologies-logo-white.png",
+    icon: "/images/zenovix-technologies-final-logo.png",
+    apple: "/images/zenovix-technologies-final-logo.png",
   },
   openGraph: {
     title: "Zenovix Technologies — Master Excel with AI",
