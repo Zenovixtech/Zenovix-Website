@@ -204,24 +204,27 @@ header {
 .brand-logo-link {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   overflow: hidden;
   border: 1px solid rgba(55, 216, 255, 0.34);
   border-radius: 12px;
   background: #fff;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
   transition: 0.25s ease;
-  padding: 2px 8px;
+  padding: 4px 14px;
 }
 
 .brand-logo-link:hover {
   border-color: var(--cyan);
   transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(55, 216, 255, 0.25);
 }
 
 .brand-logo {
   display: block;
-  width: 220px;
-  height: 58px;
+  width: auto;
+  height: 42px;
+  max-width: 180px;
   object-fit: contain;
   background: #fff;
 }
@@ -1171,9 +1174,12 @@ footer {
   .mark-label {
     font-size: 12px;
   }
+  .brand-logo-link {
+    padding: 3px 10px;
+  }
   .brand-logo {
-    width: 150px;
-    height: 42px;
+    max-width: 140px;
+    height: 34px;
   }
   .nav > .btn {
     padding: 10px 13px;

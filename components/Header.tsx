@@ -8,14 +8,14 @@ export default function Header() {
         <a
           className="brand-logo-link"
           href="#top"
-          aria-label="Zenovix Technologies workshop home"
+          aria-label="Zenovix Technologie workshop home"
         >
           <Image
             className="brand-logo"
-            src="/images/zenovix-technologies-final-logo.png"
-            alt="Zenovix Technologies"
-            width={220}
-            height={58}
+            src="/images/zenovix-technologie-logo-white.png"
+            alt="Zenovix Technologie"
+            width={180}
+            height={42}
             priority
           />
         </a>
