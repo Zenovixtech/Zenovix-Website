@@ -30,32 +30,32 @@ const deploymentUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   ...(deploymentUrl ? { metadataBase: new URL(deploymentUrl) } : {}),
-  title: "Zenovix Technologies — Master Excel with AI",
+  title: "Zenovix Technologie — Master Excel with AI",
   description:
     "A practical live workshop to clean data, build dashboards, and automate Excel reporting with AI.",
   icons: {
-    icon: "/images/zenovix-technologies-final-logo.png",
-    apple: "/images/zenovix-technologies-final-logo.png",
+    icon: "/images/zenovix-technologie-logo.png",
+    apple: "/images/zenovix-technologie-logo.png",
   },
   openGraph: {
-    title: "Zenovix Technologies — Master Excel with AI",
+    title: "Zenovix Technologie — Master Excel with AI",
     description:
       "A practical live workshop to clean data, build dashboards, and automate Excel reporting with AI.",
     type: "website",
     locale: "en_US",
-    siteName: "Zenovix Technologies",
+    siteName: "Zenovix Technologie",
     images: [
       {
         url: "/images/hero-workspace.jpg",
         width: 1200,
         height: 673,
-        alt: "Zenovix Technologies Master Excel with AI Workshop",
+        alt: "Zenovix Technologie Master Excel with AI Workshop",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Zenovix Technologies — Master Excel with AI",
+    title: "Zenovix Technologie — Master Excel with AI",
     description:
       "A practical live workshop to clean data, build dashboards, and automate Excel reporting with AI.",
     images: ["/images/hero-workspace.jpg"],
