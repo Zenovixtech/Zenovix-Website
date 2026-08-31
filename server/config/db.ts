@@ -27,14 +27,7 @@ async function connectToDatabase() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then(async (mongoose) => {
-      // Ensure collections exist to prevent WriteConflict/LockTimeout in transactions
-      try {
-        await mongoose.connection.createCollection('users').catch(() => {});
-        await mongoose.connection.createCollection('utm_campaigns').catch(() => {});
-      } catch (e) {
-        // Ignore errors if collections already exist
-      }
+    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
       return mongoose;
     });
   }
