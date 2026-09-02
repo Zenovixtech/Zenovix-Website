@@ -4,6 +4,7 @@ import { z } from 'zod';
 import UtmCampaign from '@/server/models/UtmCampaign';
 import { getDateRangeBounds } from '@/server/utils/timezone';
 import { logger } from '@/server/utils/logger';
+import mongoose from 'mongoose';
 
 export class UserService {
   constructor(private repository: UserRepository) {}
@@ -46,15 +47,15 @@ export class UserService {
 
     if (existingUser) {
       // Multi-Touchpoint Tracking: add new campaign and update demographics
-      logger.info(`Existing user detected (${existingUser.email || existingUser.phone}), updating demographics and adding campaign`);
-      await this.repository.addCampaignToUser(existingUser._id as any, campaignData, userData);
+      logger.info('Existing user detected, updating touchpoint and demographics');
+      await this.repository.addCampaignToUser(existingUser._id as mongoose.Types.ObjectId, campaignData, userData);
       
       // Return the updated user object for the response
       const updatedUser = { ...existingUser.toObject(), fullName: userData.fullName, role: userData.role, city: userData.city };
       return { user: updatedUser, status: 'existing' };
     }
 
-    logger.info(`Creating new user: ${data.email || data.phone}`);
+    logger.info('Creating new user and campaign touchpoint');
     const newUser = await this.repository.createUserWithCampaign(userData, campaignData);
     return { user: newUser, status: 'new' };
   }
@@ -66,7 +67,7 @@ export class UserService {
     // Use timezone utility for accurate range bounding
     const { start, end } = getDateRangeBounds(range, startDate, endDate, 'Asia/Kolkata');
 
-    const filter: any = {
+    const filter = {
       createdAt: {
         $gte: start,
         $lte: end,

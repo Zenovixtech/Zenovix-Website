@@ -49,7 +49,7 @@ export default function FaqSection() {
   };
 
   return (
-    <section className="section">
+    <section className="section" id="faq">
       <div className="wrap">
         <div className="section-head reveal">
           <span className="kicker">FAQ</span>

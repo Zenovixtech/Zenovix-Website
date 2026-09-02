@@ -18,23 +18,29 @@ export class UserController {
         return sendError('Please check your details and try again. Some information seems to be missing or incorrect.', ERROR_CODES.VALIDATION_ERROR, HTTP_STATUS.BAD_REQUEST, validationResult.error.format());
       }
 
-      const clientIp = req.headers.get('x-forwarded-for') || req.ip || undefined;
+      const clientIp =
+        req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+        req.headers.get('x-real-ip') ||
+        undefined;
       const userAgent = req.headers.get('user-agent') || undefined;
 
       const result = await this.service.registerUser(validationResult.data, clientIp, userAgent);
 
       return sendSuccess(result, 'Your information has been successfully saved. Thank you!', result.status === 'new' ? HTTP_STATUS.CREATED : HTTP_STATUS.OK);
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof SyntaxError) {
         logger.warn('Malformed JSON payload in signup request');
         return sendError('We received an invalid request format. Please try submitting again.', ERROR_CODES.VALIDATION_ERROR, HTTP_STATUS.BAD_REQUEST);
       }
-      if (error.message === 'USER_ALREADY_EXISTS') {
+      if (error instanceof Error && error.message === 'USER_ALREADY_EXISTS') {
         logger.warn('User already exists with this email or phone');
         return sendError('It looks like you already have an account with this email or phone number.', ERROR_CODES.USER_ALREADY_EXISTS, HTTP_STATUS.BAD_REQUEST);
       }
-      logger.error(error, 'Error during signup');
-      return sendError(error.message || 'Oops! Something went wrong on our end. Please try again later.', ERROR_CODES.UNKNOWN_ERROR, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+      logger.error(
+        { errorName: error instanceof Error ? error.name : 'UnknownError' },
+        'Error during signup'
+      );
+      return sendError('We encountered an unexpected error while saving your details. Please try again later.', ERROR_CODES.UNKNOWN_ERROR, HTTP_STATUS.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -52,9 +58,12 @@ export class UserController {
 
       const result = await this.service.getUserDetails(validationResult.data);
       return sendSuccess(result, 'User details loaded successfully.');
-    } catch (error: any) {
-      logger.error(error, 'Error fetching user details');
-      return sendError(error.message || 'Oops! Something went wrong while loading the data. Please try again later.', ERROR_CODES.UNKNOWN_ERROR, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+    } catch (error: unknown) {
+      logger.error(
+        { errorName: error instanceof Error ? error.name : 'UnknownError' },
+        'Error fetching user details'
+      );
+      return sendError('Oops! Something went wrong while loading the data. Please try again later.', ERROR_CODES.UNKNOWN_ERROR, HTTP_STATUS.INTERNAL_SERVER_ERROR);
     }
   }
 }
