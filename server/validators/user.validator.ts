@@ -90,6 +90,11 @@ export const UserDetailsQuerySchema = z.object({
   endDate: z.string().optional(),
   page: z.string().regex(/^\d+$/).default('1').transform(Number),
   limit: z.string().regex(/^\d+$/).default('10').transform(Number),
+  sort: z.enum(['newest', 'oldest']).default('newest').optional(),
+  role: z.string().optional(),
+  utm_source: z.string().optional(),
+  utm_campaign: z.string().optional(),
+  search: z.string().optional(),
 }).refine(data => {
   if (data.range === 'custom') {
     return !!data.startDate && !!data.endDate;

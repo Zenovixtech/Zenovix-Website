@@ -61,54 +61,82 @@ export class UserService {
   }
 
   async getUserDetails(query: z.infer<typeof UserDetailsQuerySchema>) {
-    const { startDate, endDate, page, limit, range } = query;
+    const { startDate, endDate, page, limit, range, sort, role, utm_source, utm_campaign, search } = query;
     const skip = (page - 1) * limit;
 
     // Use timezone utility for accurate range bounding
     const { start, end } = getDateRangeBounds(range, startDate, endDate, 'Asia/Kolkata');
 
-    const filter = {
+    const filter: Record<string, unknown> = {
       createdAt: {
         $gte: start,
         $lte: end,
       },
     };
 
+    if (utm_source) {
+      filter.utm_source = utm_source;
+    }
+    if (utm_campaign) {
+      filter.utm_campaign = utm_campaign;
+    }
+
+    const sortDirection = sort === 'oldest' ? 1 : -1;
+
     logger.info(`Fetching user details for range: ${range}, bounds: [${start.toISOString()} - ${end.toISOString()}]`);
 
-    // Query campaigns and populate user
-    const total = await UtmCampaign.countDocuments(filter);
-    
-    const campaigns = await UtmCampaign.aggregate([
+    // Base pipeline for matching date bounds, campaign attributes and joining user
+    const basePipeline: mongoose.PipelineStage[] = [
       { $match: filter },
-      { $sort: { createdAt: -1 } },
-      { $skip: skip },
-      { $limit: limit },
+      { $sort: { createdAt: sortDirection } },
       {
         $lookup: {
           from: 'users',
           localField: 'userId',
           foreignField: '_id',
-          as: 'user'
-        }
+          as: 'user',
+        },
       },
       { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
+    ];
 
+    if (role) {
+      basePipeline.push({ $match: { 'user.role': role } });
+    }
+
+    if (search && search.trim()) {
+      const regex = { $regex: search.trim(), $options: 'i' };
+      basePipeline.push({
+        $match: {
+          $or: [
+            { 'user.fullName': regex },
+            { 'user.email': regex },
+            { 'user.phone': regex },
+          ],
+        },
+      });
+    }
+
+    // Accurate count using facets or count pipeline
+    const countResult = await UtmCampaign.aggregate([...basePipeline, { $count: 'total' }]);
+    const total = countResult.length > 0 ? countResult[0].total : 0;
+
+    const dataPipeline: mongoose.PipelineStage[] = [
+      ...basePipeline,
+      { $skip: skip },
+      { $limit: limit },
       {
         $addFields: {
-          userCreatedAt: "$user.createdAt",
-          utmCreatedAt: "$createdAt"
-        }
+          userCreatedAt: '$user.createdAt',
+          utmCreatedAt: '$createdAt',
+        },
       },
       {
         $replaceRoot: {
           newRoot: {
-            $mergeObjects: [
-              "$user",
-              "$$ROOT"
-            ]
-          }
-        }
+            $mergeObjects: ['$user', '$$ROOT'],
+          },
+        },
       },
       {
         $project: {
@@ -116,13 +144,24 @@ export class UserService {
           updatedAt: 0,
           createdAt: 0,
           userId: 0,
-          user: 0
-        }
-      }
-    ]);
+          user: 0,
+          clientIp: 0,
+          userAgent: 0,
+        },
+      },
+    ];
+
+    const campaigns = await UtmCampaign.aggregate(dataPipeline);
+
+    // Defensive clientIp and userAgent stripping
+    const sanitizedData = campaigns.map((item: Record<string, unknown>) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { clientIp, userAgent, ...safeItem } = item;
+      return safeItem;
+    });
 
     return {
-      data: campaigns,
+      data: sanitizedData,
       pagination: {
         total,
         page,
