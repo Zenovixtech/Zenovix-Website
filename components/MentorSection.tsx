@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function MentorSection() {
   return (
-    <section className="section">
+    <section className="section" id="mentor">
       <div className="wrap">
         <div className="section-head reveal">
           <span className="kicker">Mentor profile</span>
