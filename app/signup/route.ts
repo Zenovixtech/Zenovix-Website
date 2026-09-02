@@ -17,7 +17,10 @@ export async function POST(req: NextRequest) {
     const controller = new UserController(service);
     return await controller.signup(req);
   } catch (error) {
-    logger.error(error, 'Database connection failed in signup route');
+    logger.error(
+      { errorName: error instanceof Error ? error.name : 'UnknownError' },
+      'Database connection failed in signup route'
+    );
     return sendError('We are currently experiencing technical difficulties. Please try again shortly.', ERROR_CODES.DATABASE_ERROR, HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 }

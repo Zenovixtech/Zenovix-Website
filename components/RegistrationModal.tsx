@@ -202,23 +202,50 @@ export default function RegistrationModal({
         website_hp: formData.website_hp,
       });
 
-      if (result.status === "BACKEND_NOT_CONFIGURED") {
-        // Show local UI demo success view
+      if (result.success) {
+        // Clear errors and display neutral success view
+        setErrors({});
         setIsSuccessView(true);
-      } else if (result.status === "SPAM_DETECTED") {
-        // Never show success view for spam
-        setErrors((prev) => ({
-          ...prev,
-          form: "Submission failed. Please check your inputs and try again.",
-        }));
+        // Clear form values upon confirmed API success
+        setFormData({
+          fullName: "",
+          email: "",
+          phone: "",
+          role: "",
+          website_hp: "",
+        });
+      } else if (result.status === "VALIDATION_ERROR") {
+        const fieldErrors: FormErrors = { form: result.message };
+        if (result.errors && typeof result.errors === "object") {
+          const errs = result.errors as Record<string, unknown>;
+          if (errs.fullName && typeof errs.fullName === "object" && "_errors" in errs.fullName) {
+            fieldErrors.fullName = ((errs.fullName as { _errors: string[] })._errors || [])[0];
+          }
+          if (errs.email && typeof errs.email === "object" && "_errors" in errs.email) {
+            fieldErrors.email = ((errs.email as { _errors: string[] })._errors || [])[0];
+          }
+          if (errs.phone && typeof errs.phone === "object" && "_errors" in errs.phone) {
+            fieldErrors.phone = ((errs.phone as { _errors: string[] })._errors || [])[0];
+          }
+          if (errs.role && typeof errs.role === "object" && "_errors" in errs.role) {
+            fieldErrors.role = ((errs.role as { _errors: string[] })._errors || [])[0];
+          }
+        }
+        setErrors(fieldErrors);
+
+        // Focus first invalid field returned by server
+        if (fieldErrors.fullName) nameInputRef.current?.focus();
+        else if (fieldErrors.email) document.getElementById("email")?.focus();
+        else if (fieldErrors.phone) document.getElementById("phone")?.focus();
+        else if (fieldErrors.role) document.getElementById("role")?.focus();
       } else {
+        // Preserve form inputs on failure and show friendly error message
         setErrors((prev) => ({
           ...prev,
           form: result.message || "Submission failed. Please try again.",
         }));
       }
     } catch (err: unknown) {
-      // Do not silently swallow errors - display visible form-level error
       const errorMessage =
         err instanceof Error ? err.message : "An unexpected error occurred during submission.";
       setErrors((prev) => ({
@@ -245,7 +272,7 @@ export default function RegistrationModal({
             <div className="modal-head">
               <div>
                 <h2 id="modalTitle">Reserve your free seat</h2>
-                <p>Enter your details to preview the registration experience.</p>
+                <p>Enter your details to reserve your seat for the live workshop.</p>
               </div>
               <button
                 type="button"
@@ -373,20 +400,15 @@ export default function RegistrationModal({
                 type="submit"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Processing..." : "Preview registration"}
+                {isSubmitting ? "Processing..." : "Reserve my seat"}
               </button>
-              <p className="fine">
-                UI demo only. No information is sent or stored until a backend API is connected.
-              </p>
             </form>
           </div>
         ) : (
           <div className="success show" id="successView">
             <div className="success-icon">✓</div>
-            <h2>Form UI verified</h2>
-            <p>
-              This prototype validated the details locally. No registration was submitted because backend integration is not connected yet.
-            </p>
+            <h2>Registration successful</h2>
+            <p>Your details have been saved.</p>
             <button
               className="btn btn-primary"
               id="doneButton"

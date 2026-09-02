@@ -1,40 +1,87 @@
 import { z } from 'zod';
 
+export const ALLOWED_ROLES = [
+  'Analyst / Reporting',
+  'Finance / Operations',
+  'Founder / Manager',
+  'Student / Career switcher',
+  'Marketing / Growth',
+  'Other',
+] as const;
+
+export type AllowedRole = (typeof ALLOWED_ROLES)[number];
+
+const trackingField = z
+  .string()
+  .transform((v) => v.trim())
+  .pipe(z.string().max(200, 'Tracking parameter exceeds maximum allowed length of 200 characters.'))
+  .transform((v) => (v.length === 0 ? undefined : v))
+  .optional();
+
 export const SignupSchema = z.object({
-  fullName: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email format'),
-  phone: z.string().min(10, 'Phone number must be at least 10 digits'),
-  countryCode: z.string().default('+91'),
-  timezone: z.string().default('Asia/Kolkata'),
-  role: z.string().optional(),
-  city: z.string().optional(),
-  route: z.string().min(1, 'Route is required'),
-  utm_source: z.string().optional(),
-  utm_medium: z.string().optional(),
-  utm_campaign: z.string().optional(),
-  utm_content: z.string().optional(),
-  platform: z.string().optional(),
-  gclid: z.string().optional(),
-  fbclid: z.string().optional(),
-  fbp: z.string().optional(),
-  fbc: z.string().optional(),
-  utm_term: z.string().optional(),
-  matchtype: z.string().optional(),
-  network: z.string().optional(),
-  device: z.string().optional(),
-  keyword: z.string().optional(),
-  placement: z.string().optional(),
-  campaignid: z.string().optional(),
-  adgroupid: z.string().optional(),
-}).transform(data => {
-  // 1. Strip the country code from the start of the phone number if the user accidentally included it
-  if (data.phone.startsWith(data.countryCode)) {
-    data.phone = data.phone.slice(data.countryCode.length);
-  }
-  // 2. Strip any leftover non-numeric characters (spaces, dashes, etc)
-  data.phone = data.phone.replace(/\D/g, '');
-  
-  return data;
+  fullName: z
+    .string()
+    .transform((v) => v.trim().replace(/\s+/g, ' '))
+    .pipe(
+      z
+        .string()
+        .min(3, 'Full name must be between 3 and 100 characters.')
+        .max(100, 'Full name must be between 3 and 100 characters.')
+        .regex(/^[\p{L}][\p{L}\s.'-]*[\p{L}]$/u, 'Enter a valid full name using letters only.')
+    ),
+  email: z
+    .string()
+    .transform((v) => v.trim().toLowerCase())
+    .pipe(
+      z
+        .string()
+        .email('Enter a valid email address.')
+        .max(254, 'Email address must not exceed 254 characters.')
+    ),
+  phone: z
+    .string()
+    .transform((v) => {
+      let clean = v.trim();
+      if (clean.startsWith('+91')) clean = clean.slice(3);
+      else if (clean.startsWith('91') && clean.length > 10) clean = clean.slice(2);
+      return clean.replace(/\D/g, '');
+    })
+    .pipe(
+      z
+        .string()
+        .regex(/^[6-9]\d{9}$/, 'Enter exactly 10 digits starting with 6, 7, 8, or 9.')
+    ),
+  countryCode: z.literal('+91', { message: 'Country code must be +91.' }).default('+91'),
+  timezone: z.literal('Asia/Kolkata', { message: 'Timezone must be Asia/Kolkata.' }).default('Asia/Kolkata'),
+  role: z.enum(ALLOWED_ROLES, { message: 'Please select a valid role.' }),
+  route: z
+    .string()
+    .transform((v) => v.trim())
+    .pipe(
+      z.string().min(1, 'Route is required.').max(2048, 'Route exceeds maximum allowed length.')
+    ),
+  city: z
+    .string()
+    .transform((v) => v.trim())
+    .pipe(z.string().max(100))
+    .optional(),
+  utm_source: trackingField,
+  utm_medium: trackingField,
+  utm_campaign: trackingField,
+  utm_content: trackingField,
+  utm_term: trackingField,
+  platform: trackingField,
+  gclid: trackingField,
+  fbclid: trackingField,
+  fbp: trackingField,
+  fbc: trackingField,
+  matchtype: trackingField,
+  network: trackingField,
+  device: trackingField,
+  keyword: trackingField,
+  placement: trackingField,
+  campaignid: trackingField,
+  adgroupid: trackingField,
 });
 
 export const UserDetailsQuerySchema = z.object({

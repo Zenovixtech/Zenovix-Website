@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, Sora, Space_Mono } from "next/font/google";
 import "./globals.css";
+import UtmTracker from "@/components/UtmTracker";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -78,7 +79,10 @@ export default function RootLayout({
       lang="en"
       className={`${dmSans.variable} ${sora.variable} ${spaceMono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <UtmTracker />
+        {children}
+      </body>
     </html>
   );
 }

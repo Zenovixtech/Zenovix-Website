@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export const sendSuccess = (data: any, message = 'Success', status = 200) => {
+export const sendSuccess = <T = unknown>(data: T, message = 'Success', status = 200) => {
   return NextResponse.json(
     {
       success: true,
@@ -11,7 +11,12 @@ export const sendSuccess = (data: any, message = 'Success', status = 200) => {
   );
 };
 
-export const sendError = (message = 'Error', code = 'UNKNOWN_ERROR', status = 500, errors?: any) => {
+export const sendError = (
+  message = 'Error',
+  code = 'UNKNOWN_ERROR',
+  status = 500,
+  errors?: Record<string, unknown> | unknown
+) => {
   return NextResponse.json(
     {
       success: false,
