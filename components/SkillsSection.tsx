@@ -1,6 +1,6 @@
 export default function SkillsSection() {
   return (
-    <section className="section">
+    <section className="section" id="skills">
       <div className="wrap">
         <div className="section-head reveal">
           <span className="kicker">What you’ll practice</span>
