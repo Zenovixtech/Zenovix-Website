@@ -10,7 +10,6 @@ export interface NavLinkItem {
 export const DEFAULT_NAV_LINKS: NavLinkItem[] = [
   { label: "Workshop", href: "#top" },
   { label: "What You’ll Learn", href: "#skills" },
-  { label: "Mentor", href: "#mentor" },
   { label: "FAQ", href: "#faq" },
 ];
 

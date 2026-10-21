@@ -6,8 +6,6 @@ import WhySection from "@/components/WhySection";
 import SkillsSection from "@/components/SkillsSection";
 import AudienceSection from "@/components/AudienceSection";
 import ToolkitSection from "@/components/ToolkitSection";
-import MentorSection from "@/components/MentorSection";
-import OwnerSection from "@/components/OwnerSection";
 import OutcomesSection from "@/components/OutcomesSection";
 import FaqSection from "@/components/FaqSection";
 import FinalCta from "@/components/FinalCta";
@@ -28,8 +26,6 @@ export default function Home() {
           <SkillsSection />
           <AudienceSection />
           <ToolkitSection />
-          <MentorSection />
-          <OwnerSection />
           <OutcomesSection />
           <FaqSection />
           <FinalCta />

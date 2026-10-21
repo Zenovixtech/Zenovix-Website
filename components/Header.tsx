@@ -5,7 +5,6 @@ import MobileNav, { NavLinkItem } from "./MobileNav";
 const NAV_LINKS: NavLinkItem[] = [
   { label: "Workshop", href: "#top" },
   { label: "What You’ll Learn", href: "#skills" },
-  { label: "Mentor", href: "#mentor" },
   { label: "FAQ", href: "#faq" },
 ];
 
