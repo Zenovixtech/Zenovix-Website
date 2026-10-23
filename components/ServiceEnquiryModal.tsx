@@ -24,7 +24,6 @@ import {
   getTopicsForCategory,
   getCategoryForTopic,
 } from "@/lib/technology-services-data";
-import MagneticButton from "./interactive/MagneticButton";
 
 export type EnquiryModalMode = "select" | "talent" | "technology";
 
@@ -854,7 +853,7 @@ export default function ServiceEnquiryModal({
 
                 {/* Submit Button */}
                 <div className="enquiry-submit-row">
-                  <MagneticButton
+                  <button
                     type="submit"
                     className="btn btn-primary enquiry-submit-btn"
                     disabled={isSubmitting}
@@ -864,7 +863,7 @@ export default function ServiceEnquiryModal({
                       : mode === "talent"
                       ? "Send Talent Request"
                       : "Send Technology Enquiry"}
-                  </MagneticButton>
+                  </button>
                 </div>
               </form>
             )}

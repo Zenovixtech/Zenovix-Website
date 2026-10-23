@@ -3,14 +3,10 @@
 import Image from "next/image";
 import RegisterButton from "./RegisterButton";
 import InteractiveNetworkHero from "./InteractiveNetworkHero";
-import ZenovixHeroShader from "./interactive/ZenovixHeroShader";
 
 export default function CorporateHero() {
   return (
     <section className="corporate-hero-section" aria-labelledby="corporate-hero-heading">
-      {/* 21st.dev inspired WebGL Digital Intelligence Shader Core */}
-      <ZenovixHeroShader />
-
       {/* Dynamic network background */}
       <InteractiveNetworkHero />
 
@@ -42,11 +38,9 @@ export default function CorporateHero() {
           </p>
 
           <div className="hero-action-group">
-            <a href="#services" className="btn btn-primary btn-magnetic">
-              <span className="btn-content-inner">
-                <span>Explore Services</span>
-                <span className="btn-icon" aria-hidden="true">↓</span>
-              </span>
+            <a href="#services" className="btn btn-primary">
+              <span>Explore Services</span>
+              <span className="btn-icon" aria-hidden="true">↓</span>
             </a>
 
             <RegisterButton

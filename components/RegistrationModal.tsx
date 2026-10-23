@@ -13,7 +13,6 @@ import {
   validateServiceInterest,
   submitRegistration,
 } from "@/lib/api/registration";
-import MagneticButton from "./interactive/MagneticButton";
 
 interface RegistrationModalProps {
   isOpen: boolean;
@@ -455,13 +454,13 @@ export default function RegistrationModal({
 
               {/* Submit Row */}
               <div className="enquiry-submit-row">
-                <MagneticButton
+                <button
                   className="btn btn-primary enquiry-submit-btn"
                   type="submit"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Processing..." : "Reserve my seat"}
-                </MagneticButton>
+                </button>
               </div>
             </form>
           </div>

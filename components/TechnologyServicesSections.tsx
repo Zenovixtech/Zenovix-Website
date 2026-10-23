@@ -208,13 +208,11 @@ export function TechnologyServicesExplorer() {
                   <button
                     ref={askButtonRef}
                     type="button"
-                    className="btn btn-primary btn-magnetic"
+                    className="btn btn-primary"
                     onClick={() => openModal(askButtonRef, "Technology Services", currentItem.title)}
                   >
-                    <span className="btn-content-inner">
-                      <span>Ask about {currentItem.title}</span>
-                      <span className="arrow" aria-hidden="true">→</span>
-                    </span>
+                    <span>Ask about {currentItem.title}</span>
+                    <span className="arrow" aria-hidden="true">→</span>
                   </button>
                 </div>
               </>
