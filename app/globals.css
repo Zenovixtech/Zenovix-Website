@@ -1369,14 +1369,16 @@ footer {
    ========================================================================== */
 
 /* Active Navigation Indicators */
-.desktop-nav-link.active,
-.desktop-nav-link.active-parent {
+.desktop-nav-link.active {
   color: var(--cyan);
   position: relative;
 }
 
-.desktop-nav-link.active::after,
-.desktop-nav-link.active-parent::after {
+.desktop-nav-link.dropdown-open {
+  color: var(--cyan);
+}
+
+.desktop-nav-link.active::after {
   content: "";
   position: absolute;
   bottom: -4px;
@@ -3536,3 +3538,168 @@ footer {
     display: none;
   }
 }
+
+/* ==========================================================================
+   LEARNING HUB DARK CINEMATIC THEME HARMONIZATION
+   ========================================================================== */
+.learning-page {
+  background-color: #071326;
+  color: #e2e8f0;
+}
+
+.learning-page .section {
+  background: transparent;
+  color: #e2e8f0;
+}
+
+.learning-page .section-head h2 {
+  color: #fff;
+}
+
+.learning-page .section-head p {
+  color: #94a3b8;
+}
+
+.learning-page .kicker {
+  color: var(--cyan);
+}
+
+.learning-page .kicker:before {
+  background: var(--cyan);
+  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
+}
+
+/* Ticker marquee dark styling */
+.learning-page .ticker {
+  background: #09172e;
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+.learning-page .ticker-track {
+  color: #94a3b8;
+}
+
+.learning-page .ticker-track span:before {
+  color: var(--cyan);
+}
+
+/* Quick Grid */
+.learning-page .quick-grid div {
+  border-left-color: var(--cyan);
+  color: #94a3b8;
+}
+
+/* Why Section */
+.learning-page .why {
+  background: #071326;
+}
+
+.learning-page .check {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.learning-page .check span {
+  color: #cbd5e1;
+}
+
+.learning-page .check i {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--cyan);
+}
+
+.learning-page .center-cta p {
+  color: #94a3b8;
+}
+
+/* Skills Section */
+.learning-page .skill-card {
+  background: rgba(11, 29, 56, 0.65);
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.learning-page .skill-card:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 20px 45px rgba(56, 189, 248, 0.15);
+  transform: translateY(-4px);
+}
+
+.learning-page .skill-num {
+  color: rgba(56, 189, 248, 0.35);
+}
+
+.learning-page .skill-card h3 {
+  color: #fff;
+}
+
+.learning-page .skill-card p {
+  color: #94a3b8;
+}
+
+/* Audience Section */
+.learning-page .audience {
+  background: #0b1a30;
+}
+
+.learning-page .chip {
+  background: rgba(11, 29, 56, 0.8);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  color: #e2e8f0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Outcomes Section */
+.learning-page .outcomes {
+  background: #071326;
+}
+
+.learning-page .outcome {
+  background: rgba(11, 29, 56, 0.65);
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.learning-page .outcome b {
+  color: var(--cyan);
+}
+
+.learning-page .outcome h3 {
+  color: #fff;
+}
+
+.learning-page .outcome p {
+  color: #94a3b8;
+}
+
+.learning-page .outcome.featured {
+  background: linear-gradient(145deg, #0f2747, #0b1e38);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+/* FAQ Section */
+.learning-page .faq {
+  background: #09172e;
+}
+
+.learning-page .faq-list details {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.learning-page .faq-list summary {
+  color: #fff;
+}
+
+.learning-page .faq-list summary i {
+  color: var(--cyan);
+}
+
+.learning-page .faq-list details p {
+  color: #94a3b8;
+}
+
+/* Final CTA */
+.learning-page .final-cta {
+  background: radial-gradient(circle at 50% 20%, #0c1a2f 0%, #071326 60%, #030712 100%);
+  color: #fff;
+}
+

@@ -3,7 +3,7 @@ export default function AudienceSection() {
     <section className="section audience">
       <div className="wrap">
         <div className="section-head reveal">
-          <span className="kicker">Who it’s for</span>
+          <span className="mono-label">{"// TARGET AUDIENCE"}</span>
           <h2>If you open Excel every week, this is for you</h2>
         </div>
         <div className="chips reveal">

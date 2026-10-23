@@ -6,7 +6,7 @@ export default function ToolkitSection() {
     <section className="section toolkit">
       <div className="wrap">
         <div className="section-head reveal">
-          <span className="kicker">Included toolkit</span>
+          <span className="mono-label">{"// INCLUDED TOOLKIT"}</span>
           <h2>Free registration includes this toolkit</h2>
           <p>Practical resources designed to keep working after the live session ends.</p>
         </div>
@@ -65,7 +65,10 @@ export default function ToolkitSection() {
           </article>
         </div>
         <div className="center-cta">
-          <RegisterButton>Register free — save your seat</RegisterButton>
+          <RegisterButton serviceInterest="Learning Hub" className="btn btn-primary">
+            <span>Register free — save your seat</span>
+            <span className="btn-icon" aria-hidden="true">→</span>
+          </RegisterButton>
           <p style={{ color: "rgba(255, 255, 255, 0.55)" }}>
             Free · Live cohort · 80 seats · Live Online
           </p>

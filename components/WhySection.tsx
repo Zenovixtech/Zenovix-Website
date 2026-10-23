@@ -5,7 +5,7 @@ export default function WhySection() {
     <section className="section why">
       <div className="wrap">
         <div className="section-head reveal">
-          <span className="kicker">Why join</span>
+          <span className="mono-label">{"// WHY JOIN"}</span>
           <h2>A workshop designed for how work actually happens</h2>
           <p>
             Less theory theatre. More guided practice on the messy spreadsheets you already work with.
@@ -38,7 +38,10 @@ export default function WhySection() {
           </div>
         </div>
         <div className="center-cta">
-          <RegisterButton>Register free — save your seat</RegisterButton>
+          <RegisterButton serviceInterest="Learning Hub" className="btn btn-primary">
+            <span>Register free — save your seat</span>
+            <span className="btn-icon" aria-hidden="true">→</span>
+          </RegisterButton>
           <p>Free live workshop · Limited to 80 seats</p>
         </div>
       </div>

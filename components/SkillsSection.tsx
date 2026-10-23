@@ -3,7 +3,7 @@ export default function SkillsSection() {
     <section className="section" id="skills">
       <div className="wrap">
         <div className="section-head reveal">
-          <span className="kicker">What you’ll practice</span>
+          <span className="mono-label">{"// SIX CORE SKILLS"}</span>
           <h2>Six skills you’ll use the next workday</h2>
           <p>Every block leaves you with something reusable—not just pages of notes.</p>
         </div>

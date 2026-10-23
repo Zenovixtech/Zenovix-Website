@@ -3,7 +3,7 @@ export default function OutcomesSection() {
     <section className="section outcomes">
       <div className="wrap">
         <div className="section-head reveal">
-          <span className="kicker">Outcomes</span>
+          <span className="mono-label">{"// TANGIBLE OUTCOMES"}</span>
           <h2>From spreadsheet busywork to better decisions</h2>
           <p>
             Feel the shift in your weekly workflow—and leave with proof of hands-on practice.

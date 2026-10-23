@@ -52,7 +52,7 @@ export default function FaqSection() {
     <section className="section" id="faq">
       <div className="wrap">
         <div className="section-head reveal">
-          <span className="kicker">FAQ</span>
+          <span className="mono-label">{"// FREQUENTLY ASKED QUESTIONS"}</span>
           <h2>Before you join</h2>
           <p>
             Key details about the workshop. Date, time, and recording policy will be confirmed before launch.

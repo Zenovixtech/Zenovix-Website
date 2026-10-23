@@ -34,7 +34,7 @@ export default function LearningHubPage() {
     <ModalProvider>
       <ScrollReveal>
         <Header />
-        <main id="main-content">
+        <main id="main-content" className="learning-page">
           <Hero />
           <Ticker />
           <QuickGrid />

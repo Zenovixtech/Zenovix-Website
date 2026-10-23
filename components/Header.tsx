@@ -57,11 +57,6 @@ export default function Header() {
     setIsServicesOpen(false);
   }, [pathname]);
 
-  const isServicesActive =
-    pathname.startsWith("/learning") ||
-    pathname.startsWith("/talent") ||
-    pathname.startsWith("/technology-services");
-
   return (
     <header className="site-header" role="banner">
       <div className="wrap site-header-inner">
@@ -99,7 +94,7 @@ export default function Header() {
               <button
                 ref={servicesTriggerRef}
                 type="button"
-                className={`desktop-nav-link dropdown-trigger ${isServicesActive ? "active-parent" : ""}`}
+                className={`desktop-nav-link dropdown-trigger ${isServicesOpen ? "dropdown-open" : ""}`}
                 aria-haspopup="menu"
                 aria-expanded={isServicesOpen}
                 aria-controls="services-dropdown"
