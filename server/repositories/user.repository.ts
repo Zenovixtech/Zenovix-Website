@@ -53,6 +53,7 @@ export class UserRepository {
             city: userData.city,
             countryCode: userData.countryCode,
             timezone: userData.timezone,
+            ...(userData.serviceInterest ? { serviceInterest: userData.serviceInterest } : {}),
           }
         }, { session });
       }

@@ -24,16 +24,19 @@ const spaceMono = Space_Mono({
   display: "swap",
 });
 
-// Safe deployment URL resolution (resolves only if an environment variable exists)
+// Safe deployment URL resolution
 const deploymentUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : process.env.NEXT_PUBLIC_APP_URL;
+  : process.env.NEXT_PUBLIC_APP_URL || "https://www.zenovixtechnologies.com";
 
 export const metadata: Metadata = {
-  ...(deploymentUrl ? { metadataBase: new URL(deploymentUrl) } : {}),
-  title: "Zenovix Technologie — Master Excel with AI",
+  metadataBase: new URL(deploymentUrl),
+  title: {
+    default: "Zenovix Technologies — Enterprise Systems, Specialized Talent & AI Capability",
+    template: "%s | Zenovix Technologies",
+  },
   description:
-    "A practical live workshop to clean data, build dashboards, and automate Excel reporting with AI.",
+    "Zenovix Technologies delivers SAP S/4HANA transformations, cloud architectures, specialized workforce deployment, and AI automation masterclasses across India.",
   icons: {
     icon: "/images/zenovix-technologie-logo.png",
     apple: "/images/zenovix-technologie-logo.png",

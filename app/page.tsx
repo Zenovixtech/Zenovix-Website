@@ -1,34 +1,38 @@
+import type { Metadata } from "next";
 import Header from "@/components/Header";
-import Hero from "@/components/Hero";
-import Ticker from "@/components/Ticker";
-import QuickGrid from "@/components/QuickGrid";
-import WhySection from "@/components/WhySection";
-import SkillsSection from "@/components/SkillsSection";
-import AudienceSection from "@/components/AudienceSection";
-import ToolkitSection from "@/components/ToolkitSection";
-import OutcomesSection from "@/components/OutcomesSection";
-import FaqSection from "@/components/FaqSection";
-import FinalCta from "@/components/FinalCta";
+import CorporateHero from "@/components/CorporateHero";
+import ServiceGatewayCards from "@/components/ServiceGatewayCards";
+import EnterpriseCapabilitiesSection from "@/components/EnterpriseCapabilitiesSection";
+import CorporateCtaSection from "@/components/CorporateCtaSection";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import { ModalProvider } from "@/components/ModalContext";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "Zenovix Technologies — Enterprise Systems, Specialized Talent & AI Capability",
+  description:
+    "Zenovix Technologies delivers SAP S/4HANA transformations, cloud architectures, specialized workforce deployment, and AI automation masterclasses across India.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Zenovix Technologies — Enterprise Systems, Specialized Talent & AI Capability",
+    description:
+      "Enterprise technology systems, SAP S/4HANA migrations, specialized workforce deployment, and AI masterclasses.",
+    url: "/",
+  },
+};
+
+export default function CorporateHomePage() {
   return (
     <ModalProvider>
       <ScrollReveal>
         <Header />
-        <main>
-          <Hero />
-          <Ticker />
-          <QuickGrid />
-          <WhySection />
-          <SkillsSection />
-          <AudienceSection />
-          <ToolkitSection />
-          <OutcomesSection />
-          <FaqSection />
-          <FinalCta />
+        <main id="main-content">
+          <CorporateHero />
+          <ServiceGatewayCards />
+          <EnterpriseCapabilitiesSection />
+          <CorporateCtaSection />
         </main>
         <Footer />
       </ScrollReveal>

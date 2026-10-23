@@ -40,6 +40,7 @@ export class UserService {
       email: data.email,
       phone: data.phone,
       role: data.role,
+      serviceInterest: data.serviceInterest,
       city: data.city,
       countryCode: data.countryCode,
       timezone: data.timezone,
@@ -51,7 +52,13 @@ export class UserService {
       await this.repository.addCampaignToUser(existingUser._id as mongoose.Types.ObjectId, campaignData, userData);
       
       // Return the updated user object for the response
-      const updatedUser = { ...existingUser.toObject(), fullName: userData.fullName, role: userData.role, city: userData.city };
+      const updatedUser = {
+        ...existingUser.toObject(),
+        fullName: userData.fullName,
+        role: userData.role,
+        city: userData.city,
+        serviceInterest: userData.serviceInterest,
+      };
       return { user: updatedUser, status: 'existing' };
     }
 

@@ -1,11 +1,14 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
+export type ServiceInterest = 'Learning Hub' | 'Talent Deployment' | 'Technology Services';
+
 export interface IUser extends Document {
   fullName: string;
   email: string;
   phone: string;
   role?: string;
   city?: string;
+  serviceInterest?: ServiceInterest;
   countryCode: string;
   timezone: string;
   status: 'ACTIVE' | 'DELETED' | 'ONHOLD';
@@ -20,6 +23,10 @@ const UserSchema: Schema = new Schema(
     phone: { type: String, required: true, unique: true },
     role: { type: String },
     city: { type: String },
+    serviceInterest: {
+      type: String,
+      enum: ['Learning Hub', 'Talent Deployment', 'Technology Services'],
+    },
     countryCode: { type: String, default: '+91' },
     timezone: { type: String, default: 'Asia/Kolkata' },
     status: { type: String, enum: ['ACTIVE', 'DELETED', 'ONHOLD'], default: 'ACTIVE' },

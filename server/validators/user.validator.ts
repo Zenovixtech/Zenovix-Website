@@ -11,6 +11,14 @@ export const ALLOWED_ROLES = [
 
 export type AllowedRole = (typeof ALLOWED_ROLES)[number];
 
+export const SERVICE_INTERESTS = [
+  'Learning Hub',
+  'Talent Deployment',
+  'Technology Services',
+] as const;
+
+export type ServiceInterest = (typeof SERVICE_INTERESTS)[number];
+
 const trackingField = z
   .string()
   .transform((v) => v.trim())
@@ -54,6 +62,7 @@ export const SignupSchema = z.object({
   countryCode: z.literal('+91', { message: 'Country code must be +91.' }).default('+91'),
   timezone: z.literal('Asia/Kolkata', { message: 'Timezone must be Asia/Kolkata.' }).default('Asia/Kolkata'),
   role: z.enum(ALLOWED_ROLES, { message: 'Please select a valid role.' }),
+  serviceInterest: z.enum(SERVICE_INTERESTS, { message: 'Please select a valid service interest.' }),
   route: z
     .string()
     .transform((v) => v.trim())

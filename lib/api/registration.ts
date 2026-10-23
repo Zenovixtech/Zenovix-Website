@@ -1,10 +1,19 @@
 import { getEffectiveTracking, clearStoredTracking } from '@/lib/tracking';
 
+export const SERVICE_INTERESTS = [
+  'Learning Hub',
+  'Talent Deployment',
+  'Technology Services',
+] as const;
+
+export type ServiceInterest = (typeof SERVICE_INTERESTS)[number];
+
 export interface RegistrationFormData {
   fullName: string;
   email: string;
   phone: string;
   role: string;
+  serviceInterest: ServiceInterest | string;
   website_hp?: string; // Honeypot field for bot/spam prevention
 }
 
@@ -13,6 +22,7 @@ export interface FormErrors {
   email?: string;
   phone?: string;
   role?: string;
+  serviceInterest?: string;
   form?: string;
 }
 
@@ -26,6 +36,16 @@ export const ALLOWED_ROLES = [
 ] as const;
 
 export type RoleType = (typeof ALLOWED_ROLES)[number];
+
+export function validateServiceInterest(value: string): string {
+  if (!value) {
+    return 'Please select a service.';
+  }
+  if (!SERVICE_INTERESTS.includes(value as ServiceInterest)) {
+    return 'Please select a valid service option.';
+  }
+  return '';
+}
 
 export function validateFullName(value: string): string {
   const normalized = value.trim().replace(/\s+/g, ' ');
@@ -88,6 +108,7 @@ export interface SignupUserDto {
   phone: string;
   role?: string;
   city?: string;
+  serviceInterest?: ServiceInterest;
   countryCode: string;
   timezone: string;
   status: 'ACTIVE' | 'DELETED' | 'ONHOLD';
@@ -172,6 +193,7 @@ export async function submitRegistration(data: RegistrationFormData): Promise<Su
   const cleanedEmail = data.email.trim().toLowerCase();
   const cleanedPhone = data.phone.trim();
   const cleanedRole = data.role.trim();
+  const cleanedServiceInterest = data.serviceInterest ? data.serviceInterest.trim() : '';
 
   // Read route path safely
   const route =
@@ -188,6 +210,7 @@ export async function submitRegistration(data: RegistrationFormData): Promise<Su
     email: cleanedEmail,
     phone: cleanedPhone,
     role: cleanedRole,
+    serviceInterest: cleanedServiceInterest,
     route,
     ...tracking,
   };

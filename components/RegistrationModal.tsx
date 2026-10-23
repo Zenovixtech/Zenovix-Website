@@ -1,14 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback, FormEvent, ChangeEvent } from "react";
+import { usePathname } from "next/navigation";
 import {
   ALLOWED_ROLES,
+  SERVICE_INTERESTS,
+  ServiceInterest,
   RegistrationFormData,
   FormErrors,
   validateFullName,
   validateEmail,
   validatePhone,
   validateRole,
+  validateServiceInterest,
   submitRegistration,
 } from "@/lib/api/registration";
 
@@ -16,27 +20,48 @@ interface RegistrationModalProps {
   isOpen: boolean;
   onClose: () => void;
   triggerRef?: React.RefObject<HTMLButtonElement | null>;
+  defaultServiceInterest?: ServiceInterest;
 }
 
 export default function RegistrationModal({
   isOpen,
   onClose,
   triggerRef,
+  defaultServiceInterest,
 }: RegistrationModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const pathname = usePathname();
+
+  const getInitialServiceInterest = useCallback((): ServiceInterest => {
+    if (defaultServiceInterest) return defaultServiceInterest;
+    if (pathname?.startsWith("/talent")) return "Talent Deployment";
+    if (pathname?.startsWith("/technology-services")) return "Technology Services";
+    return "Learning Hub";
+  }, [defaultServiceInterest, pathname]);
 
   const [formData, setFormData] = useState<RegistrationFormData>({
     fullName: "",
     email: "",
     phone: "",
     role: "",
+    serviceInterest: "Learning Hub",
     website_hp: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccessView, setIsSuccessView] = useState(false);
+
+  // Sync service preselection whenever modal opens or defaultServiceInterest changes
+  useEffect(() => {
+    if (isOpen) {
+      setFormData((prev) => ({
+        ...prev,
+        serviceInterest: getInitialServiceInterest(),
+      }));
+    }
+  }, [isOpen, getInitialServiceInterest]);
 
   const handleClose = useCallback(() => {
     onClose();
@@ -49,23 +74,22 @@ export default function RegistrationModal({
         email: "",
         phone: "",
         role: "",
+        serviceInterest: getInitialServiceInterest(),
         website_hp: "",
       });
     }, 250);
-  }, [onClose]);
+  }, [onClose, getInitialServiceInterest]);
 
   // Manage body scroll lock, focus trapping, and focus restoration
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add("lock");
-      // Focus initial input field
       const timer = setTimeout(() => {
         nameInputRef.current?.focus();
       }, 50);
       return () => clearTimeout(timer);
     } else {
       document.body.classList.remove("lock");
-      // Restore focus to trigger element
       if (triggerRef?.current) {
         triggerRef.current.focus();
       }
@@ -82,7 +106,6 @@ export default function RegistrationModal({
         return;
       }
 
-      // Keyboard focus trap
       if (e.key === "Tab" && modalRef.current) {
         const focusables = modalRef.current.querySelectorAll<HTMLElement>(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -121,7 +144,6 @@ export default function RegistrationModal({
 
     let processedValue = value;
     if (name === "phone") {
-      // Restrict mobile input to numeric digits only and max 10 chars
       processedValue = value.replace(/\D/g, "").slice(0, 10);
     }
 
@@ -134,6 +156,7 @@ export default function RegistrationModal({
       if (name === "email") fieldError = validateEmail(processedValue);
       if (name === "phone") fieldError = validatePhone(processedValue);
       if (name === "role") fieldError = validateRole(processedValue);
+      if (name === "serviceInterest") fieldError = validateServiceInterest(processedValue);
 
       setErrors((prev) => ({
         ...prev,
@@ -151,17 +174,20 @@ export default function RegistrationModal({
     const cleanedEmail = formData.email.trim().toLowerCase();
     const cleanedPhone = formData.phone.trim();
     const cleanedRole = formData.role;
+    const cleanedService = formData.serviceInterest;
 
     const nameErr = validateFullName(cleanedName);
     const emailErr = validateEmail(cleanedEmail);
     const phoneErr = validatePhone(cleanedPhone);
     const roleErr = validateRole(cleanedRole);
+    const serviceErr = validateServiceInterest(cleanedService);
 
     const newErrors: FormErrors = {
       fullName: nameErr,
       email: emailErr,
       phone: phoneErr,
       role: roleErr,
+      serviceInterest: serviceErr,
       form: "",
     };
 
@@ -173,7 +199,7 @@ export default function RegistrationModal({
       phone: cleanedPhone,
     }));
 
-    // If any field error exists, focus the first invalid field
+    // Focus first invalid field
     if (nameErr) {
       nameInputRef.current?.focus();
       return;
@@ -190,6 +216,10 @@ export default function RegistrationModal({
       document.getElementById("role")?.focus();
       return;
     }
+    if (serviceErr) {
+      document.getElementById("serviceInterest")?.focus();
+      return;
+    }
 
     // Submit form
     setIsSubmitting(true);
@@ -199,19 +229,19 @@ export default function RegistrationModal({
         email: cleanedEmail,
         phone: cleanedPhone,
         role: cleanedRole,
+        serviceInterest: cleanedService,
         website_hp: formData.website_hp,
       });
 
       if (result.success) {
-        // Clear errors and display neutral success view
         setErrors({});
         setIsSuccessView(true);
-        // Clear form values upon confirmed API success
         setFormData({
           fullName: "",
           email: "",
           phone: "",
           role: "",
+          serviceInterest: getInitialServiceInterest(),
           website_hp: "",
         });
       } else if (result.status === "VALIDATION_ERROR") {
@@ -230,16 +260,18 @@ export default function RegistrationModal({
           if (errs.role && typeof errs.role === "object" && "_errors" in errs.role) {
             fieldErrors.role = ((errs.role as { _errors: string[] })._errors || [])[0];
           }
+          if (errs.serviceInterest && typeof errs.serviceInterest === "object" && "_errors" in errs.serviceInterest) {
+            fieldErrors.serviceInterest = ((errs.serviceInterest as { _errors: string[] })._errors || [])[0];
+          }
         }
         setErrors(fieldErrors);
 
-        // Focus first invalid field returned by server
         if (fieldErrors.fullName) nameInputRef.current?.focus();
         else if (fieldErrors.email) document.getElementById("email")?.focus();
         else if (fieldErrors.phone) document.getElementById("phone")?.focus();
         else if (fieldErrors.role) document.getElementById("role")?.focus();
+        else if (fieldErrors.serviceInterest) document.getElementById("serviceInterest")?.focus();
       } else {
-        // Preserve form inputs on failure and show friendly error message
         setErrors((prev) => ({
           ...prev,
           form: result.message || "Submission failed. Please try again.",
@@ -257,6 +289,8 @@ export default function RegistrationModal({
     }
   };
 
+  const isLearningHub = formData.serviceInterest === "Learning Hub";
+
   return (
     <div
       className={`modal-backdrop ${isOpen ? "open" : ""}`}
@@ -271,14 +305,20 @@ export default function RegistrationModal({
           <div id="formView">
             <div className="modal-head">
               <div>
-                <h2 id="modalTitle">Reserve your free seat</h2>
-                <p>Enter your details to reserve your seat for the live workshop.</p>
+                <h2 id="modalTitle">
+                  {isLearningHub ? "Reserve your seat" : "Connect with Zenovix"}
+                </h2>
+                <p>
+                  {isLearningHub
+                    ? "Enter your details to reserve your seat for the live workshop."
+                    : "Share your requirements with our enterprise specialists."}
+                </p>
               </div>
               <button
                 type="button"
                 className="close"
                 id="closeModal"
-                aria-label="Close registration form"
+                aria-label="Close form"
                 onClick={handleClose}
               >
                 ×
@@ -372,6 +412,29 @@ export default function RegistrationModal({
               </div>
 
               <div className="field">
+                <label htmlFor="serviceInterest">Which service are you interested in? *</label>
+                <select
+                  id="serviceInterest"
+                  name="serviceInterest"
+                  required
+                  value={formData.serviceInterest}
+                  onChange={handleInputChange}
+                  aria-invalid={!!errors.serviceInterest}
+                  aria-describedby={errors.serviceInterest ? "serviceInterestError" : undefined}
+                >
+                  <option value="">Select a service</option>
+                  {SERVICE_INTERESTS.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+                <p className="error" id="serviceInterestError" aria-live="polite">
+                  {errors.serviceInterest}
+                </p>
+              </div>
+
+              <div className="field">
                 <label htmlFor="role">Your role *</label>
                 <select
                   id="role"
@@ -400,15 +463,19 @@ export default function RegistrationModal({
                 type="submit"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Processing..." : "Reserve my seat"}
+                {isSubmitting
+                  ? "Processing..."
+                  : isLearningHub
+                  ? "Reserve my seat"
+                  : "Submit request"}
               </button>
             </form>
           </div>
         ) : (
           <div className="success show" id="successView">
             <div className="success-icon">✓</div>
-            <h2>Registration successful</h2>
-            <p>Your details have been saved.</p>
+            <h2>Submission successful</h2>
+            <p>Your details have been saved. Our team will be in touch shortly.</p>
             <button
               className="btn btn-primary"
               id="doneButton"

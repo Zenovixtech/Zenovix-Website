@@ -1,24 +1,36 @@
 "use client";
 
 import React, { createContext, useContext, useState, useRef, ReactNode } from "react";
+import { ServiceInterest } from "@/server/models/User";
 import RegistrationModal from "./RegistrationModal";
 
 interface ModalContextType {
   isOpen: boolean;
-  openModal: (ref?: React.RefObject<HTMLButtonElement | null>) => void;
+  openModal: (
+    ref?: React.RefObject<HTMLButtonElement | null>,
+    service?: ServiceInterest
+  ) => void;
   closeModal: () => void;
   triggerRef: React.RefObject<HTMLButtonElement | null>;
+  selectedService?: ServiceInterest;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
 export function ModalProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<ServiceInterest | undefined>(undefined);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
-  const openModal = (ref?: React.RefObject<HTMLButtonElement | null>) => {
+  const openModal = (
+    ref?: React.RefObject<HTMLButtonElement | null>,
+    service?: ServiceInterest
+  ) => {
     if (ref?.current) {
       triggerRef.current = ref.current;
+    }
+    if (service) {
+      setSelectedService(service);
     }
     setIsOpen(true);
   };
@@ -28,12 +40,15 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <ModalContext.Provider value={{ isOpen, openModal, closeModal, triggerRef }}>
+    <ModalContext.Provider
+      value={{ isOpen, openModal, closeModal, triggerRef, selectedService }}
+    >
       {children}
       <RegistrationModal
         isOpen={isOpen}
         onClose={closeModal}
         triggerRef={triggerRef}
+        defaultServiceInterest={selectedService}
       />
     </ModalContext.Provider>
   );
