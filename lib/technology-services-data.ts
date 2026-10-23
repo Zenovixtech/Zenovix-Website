@@ -403,3 +403,22 @@ export const TECHNOLOGY_SERVICES_DATA: Record<"services" | "coes" | "solutions",
     ],
   },
 };
+
+export function getAllTechnologyTopics(): string[] {
+  const topics: string[] = [];
+  const keys: Array<"services" | "coes" | "solutions"> = ["services", "coes", "solutions"];
+  for (const k of keys) {
+    for (const item of TECHNOLOGY_SERVICES_DATA[k].items) {
+      if (!topics.includes(item.title)) {
+        topics.push(item.title);
+      }
+    }
+  }
+  if (!topics.includes("Other")) {
+    topics.push("Other");
+  }
+  return topics;
+}
+
+export const CANONICAL_TECHNOLOGY_TOPICS = getAllTechnologyTopics() as [string, ...string[]];
+

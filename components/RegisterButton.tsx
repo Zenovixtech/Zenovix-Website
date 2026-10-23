@@ -8,7 +8,7 @@ interface RegisterButtonProps {
   children: ReactNode;
   className?: string;
   style?: React.CSSProperties;
-  serviceInterest?: ServiceInterest;
+  serviceInterest?: ServiceInterest | "SELECT";
   id?: string;
 }
 

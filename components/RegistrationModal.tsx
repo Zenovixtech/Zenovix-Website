@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback, FormEvent, ChangeEvent } from "react";
-import { usePathname } from "next/navigation";
 import {
   ALLOWED_ROLES,
   SERVICE_INTERESTS,
@@ -20,30 +19,30 @@ interface RegistrationModalProps {
   isOpen: boolean;
   onClose: () => void;
   triggerRef?: React.RefObject<HTMLButtonElement | null>;
-  defaultServiceInterest?: ServiceInterest;
+  prefilledFields?: {
+    fullName?: string;
+    email?: string;
+    phone?: string;
+  };
 }
 
 export default function RegistrationModal({
   isOpen,
   onClose,
   triggerRef,
-  defaultServiceInterest,
+  prefilledFields,
 }: RegistrationModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
-  const pathname = usePathname();
 
   const getInitialServiceInterest = useCallback((): ServiceInterest => {
-    if (defaultServiceInterest) return defaultServiceInterest;
-    if (pathname?.startsWith("/talent")) return "Talent Deployment";
-    if (pathname?.startsWith("/technology-services")) return "Technology Services";
     return "Learning Hub";
-  }, [defaultServiceInterest, pathname]);
+  }, []);
 
   const [formData, setFormData] = useState<RegistrationFormData>({
-    fullName: "",
-    email: "",
-    phone: "",
+    fullName: prefilledFields?.fullName || "",
+    email: prefilledFields?.email || "",
+    phone: prefilledFields?.phone || "",
     role: "",
     serviceInterest: "Learning Hub",
     website_hp: "",
@@ -53,15 +52,18 @@ export default function RegistrationModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccessView, setIsSuccessView] = useState(false);
 
-  // Sync service preselection whenever modal opens or defaultServiceInterest changes
+  // Sync service preselection and prefilled fields whenever modal opens
   useEffect(() => {
     if (isOpen) {
       setFormData((prev) => ({
         ...prev,
-        serviceInterest: getInitialServiceInterest(),
+        fullName: prefilledFields?.fullName ?? prev.fullName,
+        email: prefilledFields?.email ?? prev.email,
+        phone: prefilledFields?.phone ?? prev.phone,
+        serviceInterest: "Learning Hub",
       }));
     }
-  }, [isOpen, getInitialServiceInterest]);
+  }, [isOpen, prefilledFields]);
 
   const handleClose = useCallback(() => {
     onClose();
@@ -289,8 +291,6 @@ export default function RegistrationModal({
     }
   };
 
-  const isLearningHub = formData.serviceInterest === "Learning Hub";
-
   return (
     <div
       className={`modal-backdrop ${isOpen ? "open" : ""}`}
@@ -305,14 +305,8 @@ export default function RegistrationModal({
           <div id="formView">
             <div className="modal-head">
               <div>
-                <h2 id="modalTitle">
-                  {isLearningHub ? "Reserve your seat" : "Connect with Zenovix"}
-                </h2>
-                <p>
-                  {isLearningHub
-                    ? "Enter your details to reserve your seat for the live workshop."
-                    : "Share your requirements with our enterprise specialists."}
-                </p>
+                <h2 id="modalTitle">Reserve your seat</h2>
+                <p>Enter your details to reserve your seat for the live workshop.</p>
               </div>
               <button
                 type="button"
@@ -463,11 +457,7 @@ export default function RegistrationModal({
                 type="submit"
                 disabled={isSubmitting}
               >
-                {isSubmitting
-                  ? "Processing..."
-                  : isLearningHub
-                  ? "Reserve my seat"
-                  : "Submit request"}
+                {isSubmitting ? "Processing..." : "Reserve my seat"}
               </button>
             </form>
           </div>

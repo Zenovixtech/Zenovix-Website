@@ -22,7 +22,7 @@ export default function CorporateCtaSection() {
 
             <div className="cta-button-cluster">
               <RegisterButton
-                serviceInterest="Technology Services"
+                serviceInterest="SELECT"
                 className="btn btn-primary"
               >
                 <span>Request Enterprise Consultation</span>

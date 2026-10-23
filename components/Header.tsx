@@ -225,14 +225,14 @@ export default function Header() {
         {/* Action Controls */}
         <div className="header-actions">
           <RegisterButton
-            serviceInterest={activeService}
+            serviceInterest={pathname === "/" ? "SELECT" : activeService}
             className="btn btn-primary js-register header-cta-desktop"
           >
             {pathname.startsWith("/learning") ? "Reserve free seat" : "Get in Touch"}
           </RegisterButton>
 
           <RegisterButton
-            serviceInterest={activeService}
+            serviceInterest={pathname === "/" ? "SELECT" : activeService}
             className="btn btn-primary js-register header-cta-mobile btn-compact"
           >
             {pathname.startsWith("/learning") ? "Register" : "Connect"}
