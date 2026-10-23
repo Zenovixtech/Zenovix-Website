@@ -7,7 +7,7 @@ export default function CorporateCtaSection() {
   return (
     <section className="corporate-cta-section" aria-labelledby="corporate-cta-heading">
       <div className="wrap">
-        <div className="corporate-cta-card">
+        <div className="corporate-cta-card reveal">
           <div className="cta-grid-bg" aria-hidden="true" />
           <div className="cta-content-box">
             <span className="mono-label">{"// 04 GET STARTED"}</span>
@@ -41,8 +41,8 @@ export default function CorporateCtaSection() {
                 <span>Specialist Shortlist SLA</span>
               </div>
               <div className="proof-point">
-                <strong>Direct Desk</strong>
-                <span>+91 91362 24840</span>
+                <strong>Enterprise Desk</strong>
+                <span>Priority Digital Response</span>
               </div>
               <div className="proof-point">
                 <strong>HQ & Coverage</strong>

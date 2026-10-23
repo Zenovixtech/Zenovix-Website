@@ -154,7 +154,7 @@ export const TECHNOLOGY_SERVICES_DATA: Record<"services" | "coes" | "solutions",
   },
   coes: {
     key: "coes",
-    label: "Expertise & CoEs",
+    label: "Expertise",
     items: [
       {
         title: "SAP",
@@ -273,7 +273,7 @@ export const TECHNOLOGY_SERVICES_DATA: Record<"services" | "coes" | "solutions",
   },
   solutions: {
     key: "solutions",
-    label: "Industry Solutions",
+    label: "Solutions",
     items: [
       {
         title: "SAP S/4HANA Public Cloud",
@@ -421,4 +421,54 @@ export function getAllTechnologyTopics(): string[] {
 }
 
 export const CANONICAL_TECHNOLOGY_TOPICS = getAllTechnologyTopics() as [string, ...string[]];
+
+export const TECHNOLOGY_CATEGORIES = ["Services", "Expertise", "Solutions"] as const;
+export type TechnologyCategory = (typeof TECHNOLOGY_CATEGORIES)[number];
+
+export function getCategoryFromKey(key: "services" | "coes" | "solutions"): TechnologyCategory {
+  switch (key) {
+    case "services":
+      return "Services";
+    case "coes":
+      return "Expertise";
+    case "solutions":
+      return "Solutions";
+  }
+}
+
+export function getKeyFromCategory(cat: TechnologyCategory): "services" | "coes" | "solutions" {
+  switch (cat) {
+    case "Services":
+      return "services";
+    case "Expertise":
+      return "coes";
+    case "Solutions":
+      return "solutions";
+  }
+}
+
+export function getTopicsForCategory(category: TechnologyCategory): string[] {
+  const key = getKeyFromCategory(category);
+  const catData = TECHNOLOGY_SERVICES_DATA[key];
+  if (!catData) return ["Other"];
+  const topics = catData.items.map((i) => i.title);
+  if (!topics.includes("Other")) {
+    topics.push("Other");
+  }
+  return topics;
+}
+
+export function getCategoryForTopic(topic: string): TechnologyCategory {
+  if (!topic) return "Services";
+  for (const item of TECHNOLOGY_SERVICES_DATA.services.items) {
+    if (item.title.toLowerCase() === topic.toLowerCase()) return "Services";
+  }
+  for (const item of TECHNOLOGY_SERVICES_DATA.coes.items) {
+    if (item.title.toLowerCase() === topic.toLowerCase()) return "Expertise";
+  }
+  for (const item of TECHNOLOGY_SERVICES_DATA.solutions.items) {
+    if (item.title.toLowerCase() === topic.toLowerCase()) return "Solutions";
+  }
+  return "Services";
+}
 

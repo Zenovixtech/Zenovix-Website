@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, FormEvent, ChangeEvent } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo, FormEvent, ChangeEvent } from "react";
 import {
   TALENT_SPECIALISMS,
   TALENT_HIRING_MODELS,
@@ -10,16 +10,18 @@ import {
   validateEnquiryFullName,
   validateCompanyName,
   validateWorkEmail,
-  validateOptionalPhone,
-  normalizePhoneForSubmission,
   validateTalentSpecialism,
   validateTalentHiringModel,
   validateTeamSize,
-  validateTechnologyTopic,
   validateEnquiryMessage,
   submitBusinessEnquiry,
 } from "@/lib/api/enquiry";
-import { CANONICAL_TECHNOLOGY_TOPICS } from "@/lib/technology-services-data";
+import {
+  TECHNOLOGY_CATEGORIES,
+  TechnologyCategory,
+  getTopicsForCategory,
+  getCategoryForTopic,
+} from "@/lib/technology-services-data";
 
 export type EnquiryModalMode = "select" | "talent" | "technology";
 
@@ -27,7 +29,6 @@ export interface CommonEnquiryFields {
   fullName: string;
   companyName: string;
   workEmail: string;
-  phone: string;
 }
 
 interface ServiceEnquiryModalProps {
@@ -37,7 +38,7 @@ interface ServiceEnquiryModalProps {
   initialMode?: EnquiryModalMode;
   initialTopic?: string;
   initialCommonFields?: Partial<CommonEnquiryFields>;
-  onSelectLearningHub: (commonFields: { fullName: string; email: string; phone: string }) => void;
+  onSelectLearningHub: (commonFields: { fullName: string; email: string; phone?: string }) => void;
 }
 
 export default function ServiceEnquiryModal({
@@ -55,12 +56,11 @@ export default function ServiceEnquiryModal({
 
   const [mode, setMode] = useState<EnquiryModalMode>(initialMode);
 
-  // Common Fields
+  // Common Fields (Phone removed per requirements)
   const [commonFields, setCommonFields] = useState<CommonEnquiryFields>({
     fullName: initialCommonFields?.fullName || "",
     companyName: initialCommonFields?.companyName || "",
     workEmail: initialCommonFields?.workEmail || "",
-    phone: initialCommonFields?.phone || "",
   });
 
   // Talent Specific Fields
@@ -71,9 +71,11 @@ export default function ServiceEnquiryModal({
     message: "",
   });
 
-  // Technology Specific Fields
+  // Technology Specific Fields (Services, Expertise, Solutions)
   const [technologyFields, setTechnologyFields] = useState({
+    category: (initialTopic ? getCategoryForTopic(initialTopic) : "Services") as TechnologyCategory,
     topic: initialTopic || "",
+    scope: "",
     message: "",
   });
 
@@ -84,12 +86,22 @@ export default function ServiceEnquiryModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // Derive available topics dynamically based on selected category
+  const availableTopics = useMemo(() => {
+    return getTopicsForCategory(technologyFields.category);
+  }, [technologyFields.category]);
+
   // Sync mode and topic whenever modal opens
   useEffect(() => {
     if (isOpen) {
       setMode(initialMode);
       if (initialTopic) {
-        setTechnologyFields((prev) => ({ ...prev, topic: initialTopic }));
+        const derivedCategory = getCategoryForTopic(initialTopic);
+        setTechnologyFields((prev) => ({
+          ...prev,
+          category: derivedCategory,
+          topic: initialTopic,
+        }));
       }
       if (initialCommonFields) {
         setCommonFields((prev) => ({
@@ -135,7 +147,9 @@ export default function ServiceEnquiryModal({
         message: "",
       });
       setTechnologyFields({
+        category: initialTopic ? getCategoryForTopic(initialTopic) : "Services",
         topic: initialTopic || "",
+        scope: "",
         message: "",
       });
     }, 250);
@@ -197,6 +211,7 @@ export default function ServiceEnquiryModal({
     const hasTechnologyData =
       mode === "technology" &&
       ((technologyFields.topic !== "" && technologyFields.topic !== initialTopic) ||
+        technologyFields.scope.trim() !== "" ||
         technologyFields.message.trim() !== "");
 
     if (hasTalentData || hasTechnologyData) {
@@ -233,7 +248,18 @@ export default function ServiceEnquiryModal({
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setTechnologyFields((prev) => ({ ...prev, [name]: value }));
+    if (name === "category") {
+      const nextCategory = value as TechnologyCategory;
+      const nextTopics = getTopicsForCategory(nextCategory);
+      setTechnologyFields((prev) => ({
+        ...prev,
+        category: nextCategory,
+        topic: nextTopics.includes(prev.topic) ? prev.topic : "",
+      }));
+    } else {
+      setTechnologyFields((prev) => ({ ...prev, [name]: value }));
+    }
+
     if (errors[name as keyof EnquiryFormErrors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -247,13 +273,11 @@ export default function ServiceEnquiryModal({
     const nameErr = validateEnquiryFullName(commonFields.fullName);
     const companyErr = validateCompanyName(commonFields.companyName);
     const emailErr = validateWorkEmail(commonFields.workEmail);
-    const phoneErr = validateOptionalPhone(commonFields.phone);
 
     const newErrors: EnquiryFormErrors = {
       fullName: nameErr || undefined,
       companyName: companyErr || undefined,
       workEmail: emailErr || undefined,
-      phone: phoneErr || undefined,
     };
 
     // 2. Service-specific validation
@@ -268,10 +292,10 @@ export default function ServiceEnquiryModal({
       newErrors.teamSize = teamErr || undefined;
       newErrors.message = msgErr || undefined;
     } else if (mode === "technology") {
-      const topicErr = validateTechnologyTopic(technologyFields.topic);
+      if (!technologyFields.category) {
+        newErrors.category = "Please select an area: Services, Expertise, or Solutions.";
+      }
       const msgErr = validateEnquiryMessage(technologyFields.message);
-
-      newErrors.topic = topicErr || undefined;
       newErrors.message = msgErr || undefined;
     }
 
@@ -293,10 +317,6 @@ export default function ServiceEnquiryModal({
         document.getElementById("enquiryWorkEmail")?.focus();
         return;
       }
-      if (newErrors.phone) {
-        document.getElementById("enquiryPhone")?.focus();
-        return;
-      }
       if (mode === "talent") {
         if (newErrors.specialism) {
           document.getElementById("enquirySpecialism")?.focus();
@@ -315,8 +335,8 @@ export default function ServiceEnquiryModal({
           return;
         }
       } else if (mode === "technology") {
-        if (newErrors.topic) {
-          document.getElementById("enquiryTopic")?.focus();
+        if (newErrors.category) {
+          document.getElementById("enquiryCategory")?.focus();
           return;
         }
         if (newErrors.message) {
@@ -332,8 +352,6 @@ export default function ServiceEnquiryModal({
     setErrors({});
 
     try {
-      const normalizedPhone = normalizePhoneForSubmission(commonFields.phone);
-
       const payload =
         mode === "talent"
           ? {
@@ -341,7 +359,6 @@ export default function ServiceEnquiryModal({
               fullName: commonFields.fullName.trim().replace(/\s+/g, " "),
               companyName: commonFields.companyName.trim().replace(/\s+/g, " "),
               workEmail: commonFields.workEmail.trim().toLowerCase(),
-              phone: normalizedPhone,
               message: talentFields.message.trim(),
               talentDetails: {
                 specialism: talentFields.specialism as TalentSpecialism,
@@ -355,10 +372,11 @@ export default function ServiceEnquiryModal({
               fullName: commonFields.fullName.trim().replace(/\s+/g, " "),
               companyName: commonFields.companyName.trim().replace(/\s+/g, " "),
               workEmail: commonFields.workEmail.trim().toLowerCase(),
-              phone: normalizedPhone,
               message: technologyFields.message.trim(),
               technologyDetails: {
-                topic: technologyFields.topic.trim(),
+                category: technologyFields.category,
+                topic: technologyFields.topic.trim() || undefined,
+                scope: technologyFields.scope.trim() || undefined,
               },
               website_hp: websiteHp,
             };
@@ -372,7 +390,6 @@ export default function ServiceEnquiryModal({
           fullName: "",
           companyName: "",
           workEmail: "",
-          phone: "",
         });
         setTalentFields({
           specialism: "",
@@ -381,92 +398,120 @@ export default function ServiceEnquiryModal({
           message: "",
         });
         setTechnologyFields({
-          topic: initialTopic || "",
+          category: "Services",
+          topic: "",
+          scope: "",
           message: "",
         });
       } else {
-        setErrors({
-          general: result.message,
-          ...result.fieldErrors,
-        });
+        if (result.fieldErrors) {
+          setErrors(result.fieldErrors);
+        } else {
+          setErrors({ general: result.message });
+        }
       }
     } catch {
       setErrors({
-        general: "We encountered an unexpected error. Please check your connection and try again.",
+        general: "We encountered an unexpected connection issue. Please try submitting again.",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Determine Titles and Headings
+  const getHeaderMeta = () => {
+    if (mode === "select") {
+      return {
+        badge: "// SERVICE SELECTION",
+        title: "How can Zenovix assist your organisation?",
+        subtitle: "Select the practice area matching your roadmap requirements.",
+      };
+    }
+    if (mode === "talent") {
+      return {
+        badge: "// TALENT DEPLOYMENT INQUIRY",
+        title: "Deploy Vetted Specialists with Zenovix",
+        subtitle:
+          "Tell us what your programme needs. A technical recruiter will respond with an exact shortlist within 48 hours.",
+      };
+    }
+    return {
+      badge: "// TECHNOLOGY SERVICES INQUIRY",
+      title: "Request Enterprise Technology Discovery",
+      subtitle:
+        "Connect with our SAP, Cloud, and AI architects for structured roadmap discovery and scoping.",
+    };
+  };
+
+  const headerMeta = getHeaderMeta();
+
   return (
     <div
       className={`modal-backdrop ${isOpen ? "open" : ""}`}
-      id="serviceEnquiryModal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="enquiryModalTitle"
+      id="serviceEnquiryModalBackdrop"
+      role="presentation"
       onClick={handleBackdropClick}
+      aria-hidden={!isOpen}
     >
-      <div className="modal enquiry-modal" ref={modalRef}>
-        {/* Success View */}
+      <div
+        className="modal enquiry-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="enquiryModalTitle"
+        aria-describedby="enquiryModalSubtitle"
+        ref={modalRef}
+      >
         {isSuccess ? (
           <div className="enquiry-success-view">
             <div className="enquiry-success-icon" aria-hidden="true">✓</div>
             <h2 id="enquiryModalTitle">Your enquiry has been received.</h2>
-            <p>
-              Thank you for reaching out to Zenovix Technologies. Our enterprise practice team will
-              review your details and respond with a focused brief.
+            <p id="enquiryModalSubtitle">
+              Thank you for reaching out. Our practice leads have received your details and will
+              respond within one business day with relevant case studies and next steps.
             </p>
             <button
               type="button"
               className="btn btn-primary"
               onClick={handleClose}
+              autoFocus
             >
-              Done
+              Close Window
             </button>
           </div>
         ) : (
-          <div>
+          <div className="enquiry-modal-content">
             {/* Modal Header */}
-            <div className="enquiry-modal-head">
-              <div>
-                {mode !== "select" && (
-                  <button
-                    type="button"
-                    className="modal-back-btn"
-                    onClick={handleChangeService}
-                    aria-label="Change service selection"
-                  >
-                    <span>←</span>
-                    <span>Change service</span>
-                  </button>
-                )}
-                <h2 id="enquiryModalTitle">
-                  {mode === "select" && "Connect with Zenovix"}
-                  {mode === "talent" && "Deploy Specialists with Zenovix"}
-                  {mode === "technology" && "Start a Technology Conversation"}
-                </h2>
-                <p>
-                  {mode === "select" && "Which service can we help you with?"}
-                  {mode === "talent" &&
-                    "Tell us about the specialists or managed team your programme requires."}
-                  {mode === "technology" &&
-                    "Tell us what you want to achieve. Our team will route your enquiry to the right specialist."}
-                </p>
+            <div className="modal-head enquiry-head">
+              <div className="enquiry-head-copy">
+                <div className="enquiry-badge-row">
+                  <span className="mono-label enquiry-badge">{headerMeta.badge}</span>
+                  {mode !== "select" && (
+                    <button
+                      type="button"
+                      className="service-switch-link"
+                      onClick={handleChangeService}
+                      title="Switch to another service"
+                    >
+                      ← Change Service
+                    </button>
+                  )}
+                </div>
+                <h2 id="enquiryModalTitle">{headerMeta.title}</h2>
+                <p id="enquiryModalSubtitle">{headerMeta.subtitle}</p>
               </div>
 
               <button
                 type="button"
-                className="enquiry-close-btn"
-                aria-label="Close modal"
+                className="modal-close"
                 onClick={handleClose}
+                aria-label="Close modal window"
               >
-                ×
+                &times;
               </button>
             </div>
 
-            {/* Error Banner */}
+            {/* General Server/Validation Error Banner */}
             {errors.general && (
               <div className="enquiry-form-error-banner" role="alert" aria-live="polite">
                 {errors.general}
@@ -486,7 +531,6 @@ export default function ServiceEnquiryModal({
                     onSelectLearningHub({
                       fullName: commonFields.fullName,
                       email: commonFields.workEmail,
-                      phone: commonFields.phone,
                     });
                   }}
                 >
@@ -523,7 +567,7 @@ export default function ServiceEnquiryModal({
                   onClick={() => setMode("technology")}
                 >
                   <div className="selector-card-top">
-                    <span className="selector-badge">ENTERPRISE SYSTEMS &amp; COEs</span>
+                    <span className="selector-badge">SERVICES · EXPERTISE · SOLUTIONS</span>
                     <span className="selector-arrow" aria-hidden="true">→</span>
                   </div>
                   <strong>Technology Services</strong>
@@ -562,6 +606,7 @@ export default function ServiceEnquiryModal({
                       name="fullName"
                       required
                       autoComplete="name"
+                      placeholder="e.g. Priya Sharma"
                       value={commonFields.fullName}
                       onChange={handleCommonChange}
                       aria-invalid={!!errors.fullName}
@@ -582,6 +627,7 @@ export default function ServiceEnquiryModal({
                       name="companyName"
                       required
                       autoComplete="organization"
+                      placeholder="e.g. Tata Steel / Acme Corp"
                       value={commonFields.companyName}
                       onChange={handleCommonChange}
                       aria-invalid={!!errors.companyName}
@@ -595,49 +641,26 @@ export default function ServiceEnquiryModal({
                   </div>
                 </div>
 
-                {/* Common Row 2: Work email & Phone */}
-                <div className="enquiry-two-col">
-                  <div className="enquiry-field">
-                    <label htmlFor="enquiryWorkEmail">Work email *</label>
-                    <input
-                      type="email"
-                      id="enquiryWorkEmail"
-                      name="workEmail"
-                      required
-                      autoComplete="email"
-                      value={commonFields.workEmail}
-                      onChange={handleCommonChange}
-                      aria-invalid={!!errors.workEmail}
-                      aria-describedby={errors.workEmail ? "workEmailErr" : undefined}
-                    />
-                    {errors.workEmail && (
-                      <span className="field-error" id="workEmailErr" aria-live="polite">
-                        {errors.workEmail}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="enquiry-field">
-                    <label htmlFor="enquiryPhone">
-                      Phone <small>(optional)</small>
-                    </label>
-                    <input
-                      type="tel"
-                      id="enquiryPhone"
-                      name="phone"
-                      autoComplete="tel"
-                      placeholder="e.g. 9876543210"
-                      value={commonFields.phone}
-                      onChange={handleCommonChange}
-                      aria-invalid={!!errors.phone}
-                      aria-describedby={errors.phone ? "phoneErr" : undefined}
-                    />
-                    {errors.phone && (
-                      <span className="field-error" id="phoneErr" aria-live="polite">
-                        {errors.phone}
-                      </span>
-                    )}
-                  </div>
+                {/* Common Row 2: Work email (Full width, phone removed) */}
+                <div className="enquiry-field">
+                  <label htmlFor="enquiryWorkEmail">Work email *</label>
+                  <input
+                    type="email"
+                    id="enquiryWorkEmail"
+                    name="workEmail"
+                    required
+                    autoComplete="email"
+                    placeholder="e.g. priya.sharma@company.com"
+                    value={commonFields.workEmail}
+                    onChange={handleCommonChange}
+                    aria-invalid={!!errors.workEmail}
+                    aria-describedby={errors.workEmail ? "workEmailErr" : undefined}
+                  />
+                  {errors.workEmail && (
+                    <span className="field-error" id="workEmailErr" aria-live="polite">
+                      {errors.workEmail}
+                    </span>
+                  )}
                 </div>
 
                 {/* TALENT SPECIFIC FIELDS */}
@@ -703,7 +726,7 @@ export default function ServiceEnquiryModal({
                         type="text"
                         id="enquiryTeamSize"
                         name="teamSize"
-                        placeholder="e.g. 3 SAP IS-U consultants"
+                        placeholder="e.g. 3 SAP IS-U consultants, 1 AI engineer"
                         value={talentFields.teamSize}
                         onChange={handleTalentChange}
                         aria-invalid={!!errors.teamSize}
@@ -738,36 +761,82 @@ export default function ServiceEnquiryModal({
                   </>
                 )}
 
-                {/* TECHNOLOGY SERVICES SPECIFIC FIELDS */}
+                {/* TECHNOLOGY SERVICES SPECIFIC FIELDS (Services, Expertise, Solutions) */}
                 {mode === "technology" && (
                   <>
+                    <div className="enquiry-two-col">
+                      <div className="enquiry-field">
+                        <label htmlFor="enquiryCategory">Capability Area *</label>
+                        <select
+                          id="enquiryCategory"
+                          name="category"
+                          required
+                          value={technologyFields.category}
+                          onChange={handleTechnologyChange}
+                          aria-invalid={!!errors.category}
+                          aria-describedby={errors.category ? "categoryErr" : undefined}
+                        >
+                          {TECHNOLOGY_CATEGORIES.map((c) => (
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          ))}
+                        </select>
+                        {errors.category && (
+                          <span className="field-error" id="categoryErr" aria-live="polite">
+                            {errors.category}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="enquiry-field">
+                        <label htmlFor="enquiryTopic">Practice or Focus</label>
+                        <select
+                          id="enquiryTopic"
+                          name="topic"
+                          value={technologyFields.topic}
+                          onChange={handleTechnologyChange}
+                          aria-invalid={!!errors.topic}
+                          aria-describedby={errors.topic ? "topicErr" : undefined}
+                        >
+                          <option value="">General {technologyFields.category} Consultation</option>
+                          {availableTopics.map((topic) => (
+                            <option key={topic} value={topic}>
+                              {topic}
+                            </option>
+                          ))}
+                        </select>
+                        {errors.topic && (
+                          <span className="field-error" id="topicErr" aria-live="polite">
+                            {errors.topic}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
                     <div className="enquiry-field">
-                      <label htmlFor="enquiryTopic">Interested in *</label>
-                      <select
-                        id="enquiryTopic"
-                        name="topic"
-                        required
-                        value={technologyFields.topic}
+                      <label htmlFor="enquiryTechScope">
+                        Expected Timeline or Scope <small>(optional)</small>
+                      </label>
+                      <input
+                        type="text"
+                        id="enquiryTechScope"
+                        name="scope"
+                        placeholder="e.g. Q4 2026 rollout, migration discovery, 6-month roadmap"
+                        value={technologyFields.scope}
                         onChange={handleTechnologyChange}
-                        aria-invalid={!!errors.topic}
-                        aria-describedby={errors.topic ? "topicErr" : undefined}
-                      >
-                        <option value="">Select a technology topic</option>
-                        {CANONICAL_TECHNOLOGY_TOPICS.map((topic) => (
-                          <option key={topic} value={topic}>
-                            {topic}
-                          </option>
-                        ))}
-                      </select>
-                      {errors.topic && (
-                        <span className="field-error" id="topicErr" aria-live="polite">
-                          {errors.topic}
+                        aria-invalid={!!errors.scope}
+                        aria-describedby={errors.scope ? "scopeErr" : undefined}
+                      />
+                      {errors.scope && (
+                        <span className="field-error" id="scopeErr" aria-live="polite">
+                          {errors.scope}
                         </span>
                       )}
                     </div>
 
                     <div className="enquiry-field">
-                      <label htmlFor="enquiryMessage">How can we help? *</label>
+                      <label htmlFor="enquiryMessage">Project requirements *</label>
                       <textarea
                         id="enquiryMessage"
                         name="message"

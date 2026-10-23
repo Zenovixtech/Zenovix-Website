@@ -131,7 +131,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
 
   // Transition from Enquiry service-selection directly into Learning Hub registration
   const handleSelectLearningHub = useCallback(
-    (fields: { fullName: string; email: string; phone: string }) => {
+    (fields: { fullName: string; email: string; phone?: string }) => {
       setIsEnquiryOpen(false);
       setLearningPrefilled(fields);
       // Small timeout ensures clean backdrop transition

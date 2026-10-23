@@ -75,10 +75,6 @@ export default function Footer() {
               <strong>Support:</strong>
               <a href="mailto:support@zenovixtechnologies.com">support@zenovixtechnologies.com</a>
             </p>
-            <p className="footer-contact-item">
-              <strong>Phone:</strong>
-              <a href="tel:+919136224840">+91 91362 24840</a>
-            </p>
           </div>
         </div>
 

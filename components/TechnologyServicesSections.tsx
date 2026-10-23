@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import RegisterButton from "./RegisterButton";
 import TrackingLink from "./TrackingLink";
 import InteractiveNetworkHero from "./InteractiveNetworkHero";
@@ -21,7 +21,7 @@ export function TechnologyServicesHero() {
           <span className="hero-mono-chip">{"// 03 TECHNOLOGY SERVICES"}</span>
           <span className="hero-pill-status">
             <span className="dot pulse"></span>
-            SAP · AI · CLOUD · CYBER
+            SERVICES · EXPERTISE · SOLUTIONS
           </span>
         </div>
 
@@ -47,7 +47,7 @@ export function TechnologyServicesHero() {
           </RegisterButton>
         </div>
 
-        <div className="tech-hero-badges">
+        <div className="tech-hero-badges reveal">
           <div className="badge-item">
             <span className="badge-dot">✦</span>
             <span>SAP Gold Delivery Standard</span>
@@ -69,30 +69,46 @@ export function TechnologyServicesHero() {
 export function TechnologyServicesExplorer() {
   const [activeCategory, setActiveCategory] = useState<"services" | "coes" | "solutions">("services");
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState("");
   const { openModal } = useModalContext();
   const askButtonRef = useRef<HTMLButtonElement>(null);
 
   const category: ServiceCategory = TECHNOLOGY_SERVICES_DATA[activeCategory];
-  const currentItem: ServiceItem = category.items[selectedIndex] || category.items[0];
+
+  // Interactive filter for capability search
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return category.items;
+    const q = searchQuery.toLowerCase().trim();
+    return category.items.filter(
+      (item) =>
+        item.title.toLowerCase().includes(q) ||
+        item.desc.toLowerCase().includes(q) ||
+        item.features.some((f) => f.toLowerCase().includes(q))
+    );
+  }, [category.items, searchQuery]);
+
+  const currentItem: ServiceItem =
+    filteredItems[selectedIndex] || filteredItems[0] || category.items[0];
 
   const handleCategoryChange = (key: "services" | "coes" | "solutions") => {
     setActiveCategory(key);
     setSelectedIndex(0);
+    setSearchQuery("");
   };
 
   return (
     <section className="tech-explorer-section" id="explorer" aria-labelledby="explorer-heading">
       <div className="wrap">
-        <div className="section-head">
+        <div className="section-head reveal">
           <span className="mono-label">{"// SYSTEM CAPABILITIES"}</span>
           <h2 id="explorer-heading">Comprehensive Enterprise Capabilities Matrix.</h2>
           <p className="section-sub">
-            Explore our genuine practice areas, centres of excellence, and industry-tailored solutions.
+            Explore our genuine practice areas across Services, Expertise, and Solutions.
           </p>
         </div>
 
         {/* Categories Tab Bar */}
-        <div className="explorer-tabs" role="tablist" aria-label="Technology Services Categories">
+        <div className="explorer-tabs reveal" role="tablist" aria-label="Technology Services Categories">
           {(["services", "coes", "solutions"] as const).map((key) => {
             const cat = TECHNOLOGY_SERVICES_DATA[key];
             const isSelected = activeCategory === key;
@@ -112,70 +128,90 @@ export function TechnologyServicesExplorer() {
           })}
         </div>
 
-        {/* Split Grid: List + Live Panel */}
-        <div className="explorer-grid">
-          {/* Left Column: Interactive List */}
-          <div
-            className="explorer-list-box"
-            role="tablist"
-            aria-label={`${category.label} Items`}
-          >
-            <div className="list-scroll-container">
-              {category.items.map((item, idx) => {
-                const isActive = idx === selectedIndex;
-                return (
-                  <button
-                    key={item.title}
-                    type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    className={`explorer-item-btn ${isActive ? "active" : ""}`}
-                    onClick={() => setSelectedIndex(idx)}
-                  >
-                    <div className="item-text">
-                      <span className="item-title">{item.title}</span>
-                      <span className="item-summary">{item.desc}</span>
-                    </div>
-                    <span className="item-chevron" aria-hidden="true">›</span>
-                  </button>
-                );
-              })}
+        {/* Explorer Content Grid */}
+        <div className="explorer-grid reveal">
+          {/* Left Column: Capability List with interactive quick filter */}
+          <div className="explorer-list-box">
+            <div className="explorer-search-box">
+              <input
+                type="text"
+                className="explorer-search-input"
+                placeholder={`Search in ${category.label}...`}
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setSelectedIndex(0);
+                }}
+                aria-label={`Search capabilities in ${category.label}`}
+              />
+            </div>
+
+            <div className="list-scroll-container" role="tablist" aria-orientation="vertical">
+              {filteredItems.length === 0 ? (
+                <div style={{ padding: "16px", color: "#94a3b8", fontSize: "13px" }}>
+                  No matching items found. Try another search keyword.
+                </div>
+              ) : (
+                filteredItems.map((item, idx) => {
+                  const isCurrent = currentItem && currentItem.title === item.title;
+                  return (
+                    <button
+                      key={item.title}
+                      type="button"
+                      role="tab"
+                      aria-selected={isCurrent}
+                      className={`explorer-item-btn ${isCurrent ? "active" : ""}`}
+                      onClick={() => setSelectedIndex(idx)}
+                    >
+                      <div className="item-text">
+                        <strong className="item-title">{item.title}</strong>
+                        <span className="item-summary">{item.desc}</span>
+                      </div>
+                      <span className="item-chevron" aria-hidden="true">→</span>
+                    </button>
+                  );
+                })
+              )}
             </div>
           </div>
 
-          {/* Right Column: Live Interactive Detail Panel */}
+          {/* Right Column: Detailed Capability Showcase */}
           <div className="explorer-detail-panel" role="tabpanel">
-            <div className="panel-badge-row">
-              <span className="panel-category-tag">{category.label.toUpperCase()}</span>
-              <span className="panel-item-num">ITEM // {String(selectedIndex + 1).padStart(2, "0")}</span>
-            </div>
+            {currentItem && (
+              <>
+                <div className="panel-badge-row">
+                  <span className="panel-category-tag">{category.label.toUpperCase()}</span>
+                  <span className="panel-item-num">PRACTICE AREA</span>
+                </div>
 
-            <h3 className="panel-item-title">{currentItem.title}</h3>
-            <p className="panel-item-description">{currentItem.desc}</p>
+                <h3 className="panel-item-title">{currentItem.title}</h3>
+                <p className="panel-item-description">{currentItem.desc}</p>
 
-            <div className="panel-features-block">
-              <h4 className="features-heading">CORE DELIVERABLES & MODULES:</h4>
-              <ul className="features-list">
-                {currentItem.features.map((feat, fIdx) => (
-                  <li key={fIdx}>
-                    <span className="feat-bullet">▹</span>
-                    <span>{feat}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                <div className="panel-features-block">
+                  <span className="features-heading">KEY DELIVERABLES &amp; CAPABILITIES</span>
+                  <ul className="features-list">
+                    {currentItem.features.map((feature, fIdx) => (
+                      <li key={fIdx}>
+                        <span className="feat-bullet" aria-hidden="true">✦</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-            <div className="panel-actions-row">
-              <button
-                ref={askButtonRef}
-                type="button"
-                className="btn btn-primary"
-                onClick={() => openModal(askButtonRef, "Technology Services", currentItem.title)}
-              >
-                <span>Ask about {currentItem.title}</span>
-                <span className="arrow" aria-hidden="true">→</span>
-              </button>
-            </div>
+                <div className="panel-actions-row">
+                  <button
+                    ref={askButtonRef}
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => openModal(askButtonRef, "Technology Services", currentItem.title)}
+                  >
+                    <span>Ask about {currentItem.title}</span>
+                    <span className="arrow" aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -205,14 +241,14 @@ export function TechnologyServicesWhyZenovix() {
   return (
     <section className="tech-why-section" aria-labelledby="why-tech-heading">
       <div className="wrap">
-        <div className="section-head">
+        <div className="section-head reveal">
           <span className="mono-label">{"// THE ZENOVIX DIFFERENCE"}</span>
           <h2 id="why-tech-heading">Why enterprise leaders choose Zenovix.</h2>
         </div>
 
         <div className="why-grid">
-          {cards.map((c) => (
-            <div key={c.num} className="why-card">
+          {cards.map((c, i) => (
+            <div key={c.num} className={`why-card reveal reveal-stagger-${i + 1}`}>
               <span className="why-num">{c.num}</span>
               <h3>{c.title}</h3>
               <p>{c.desc}</p>
@@ -227,12 +263,12 @@ export function TechnologyServicesWhyZenovix() {
 export function TechnologyServicesContact() {
   return (
     <section className="tech-contact-section" id="contact" aria-labelledby="tech-contact-heading">
-      <div className="wrap tech-contact-grid">
+      <div className="wrap tech-contact-grid reveal">
         <div className="tech-contact-info">
           <span className="mono-label">{"// START A CONVERSATION"}</span>
           <h2 id="tech-contact-heading">Plan Your Next Transformation with Us.</h2>
           <p>
-            Tell us what you want to achieve. A senior technical architect will respond within two business days.
+            Tell us what you want to achieve. A senior technical architect will respond within one business day.
           </p>
 
           <div className="tech-contact-items">
@@ -247,8 +283,8 @@ export function TechnologyServicesContact() {
             </div>
 
             <div className="tech-contact-item">
-              <strong>Direct Desk</strong>
-              <a href="tel:+919136224840">+91 91362 24840</a>
+              <strong>Enterprise Discovery</strong>
+              <span>1 Business Day Engagement</span>
             </div>
 
             <div className="tech-contact-item">

@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { CANONICAL_TECHNOLOGY_TOPICS } from '@/lib/technology-services-data';
+import {
+  CANONICAL_TECHNOLOGY_TOPICS,
+  TECHNOLOGY_CATEGORIES,
+  TechnologyCategory,
+} from '@/lib/technology-services-data';
+
+export { TECHNOLOGY_CATEGORIES };
+export type { TechnologyCategory };
 
 export const TALENT_SPECIALISMS = [
   'SAP IS-U / Utilities',
@@ -132,18 +139,27 @@ const TalentDetailsSchema = z.object({
 });
 
 const TechnologyDetailsSchema = z.object({
+  category: z.enum(TECHNOLOGY_CATEGORIES, {
+    message: 'Please select an area: Services, Expertise, or Solutions.',
+  }),
   topic: z
     .string()
     .transform((v) => v.trim())
-    .pipe(
-      z.string().min(1, 'Please select a technology service or solution.').max(200)
-    )
+    .pipe(z.string().max(200, 'Topic must not exceed 200 characters.'))
+    .transform((v) => (v.length === 0 ? undefined : v))
     .refine(
-      (topic) => (CANONICAL_TECHNOLOGY_TOPICS as readonly string[]).includes(topic),
+      (topic) => topic === undefined || (CANONICAL_TECHNOLOGY_TOPICS as readonly string[]).includes(topic),
       {
-        message: 'Please select an approved technology service from the catalogue.',
+        message: 'Please select an approved technology capability from the catalogue.',
       }
-    ),
+    )
+    .optional(),
+  scope: z
+    .string()
+    .transform((v) => v.trim())
+    .pipe(z.string().max(200, 'Project scope must not exceed 200 characters.'))
+    .transform((v) => (v.length === 0 ? undefined : v))
+    .optional(),
 });
 
 export const TalentEnquirySchema = z.object({

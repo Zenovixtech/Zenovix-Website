@@ -5,16 +5,19 @@ import {
   TalentSpecialism,
   TalentHiringModel,
 } from '@/server/validators/enquiry.validator';
-import { CANONICAL_TECHNOLOGY_TOPICS } from '@/lib/technology-services-data';
+import {
+  CANONICAL_TECHNOLOGY_TOPICS,
+  TECHNOLOGY_CATEGORIES,
+  TechnologyCategory,
+} from '@/lib/technology-services-data';
 
-export { TALENT_SPECIALISMS, TALENT_HIRING_MODELS };
-export type { TalentSpecialism, TalentHiringModel };
+export { TALENT_SPECIALISMS, TALENT_HIRING_MODELS, TECHNOLOGY_CATEGORIES };
+export type { TalentSpecialism, TalentHiringModel, TechnologyCategory };
 
 export interface TalentEnquiryFormData {
   fullName: string;
   companyName: string;
   workEmail: string;
-  phone: string;
   specialism: string;
   hiringModel: string;
   teamSize: string;
@@ -26,8 +29,9 @@ export interface TechnologyEnquiryFormData {
   fullName: string;
   companyName: string;
   workEmail: string;
-  phone: string;
+  category: TechnologyCategory | '';
   topic: string;
+  scope: string;
   message: string;
   website_hp: string;
 }
@@ -40,7 +44,9 @@ export interface EnquiryFormErrors {
   specialism?: string;
   hiringModel?: string;
   teamSize?: string;
+  category?: string;
   topic?: string;
+  scope?: string;
   message?: string;
   serviceInterest?: string;
   general?: string;
@@ -179,7 +185,9 @@ export type EnquirySubmissionPayload =
       phone?: string;
       message: string;
       technologyDetails: {
-        topic: string;
+        category: TechnologyCategory;
+        topic?: string;
+        scope?: string;
       };
       website_hp?: string;
     };

@@ -39,7 +39,7 @@ export default function EnterpriseCapabilitiesSection() {
   return (
     <section className="corporate-capabilities-section" aria-labelledby="capabilities-heading">
       <div className="wrap">
-        <div className="capabilities-header">
+        <div className="capabilities-header reveal">
           <div className="header-meta">
             <span className="section-label">{"// 03 CORE PILLARS"}</span>
             <span className="header-status">INFRASTRUCTURE READY</span>
@@ -54,8 +54,8 @@ export default function EnterpriseCapabilitiesSection() {
         </div>
 
         <div className="capabilities-grid">
-          {pillars.map((pillar) => (
-            <div key={pillar.index} className="capability-card">
+          {pillars.map((pillar, i) => (
+            <div key={pillar.index} className={`capability-card reveal reveal-stagger-${(i % 4) + 1}`}>
               <div className="capability-card-top">
                 <span className="pillar-num">{pillar.index}</span>
                 <div className="pillar-tags">

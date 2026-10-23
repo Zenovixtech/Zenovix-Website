@@ -38,7 +38,7 @@ export function TalentHero() {
             </a>
           </div>
 
-          <div className="talent-proof-summary">
+          <div className="talent-proof-summary reveal">
             <div className="proof-metric">
               <strong>48-HR</strong>
               <span>Target Shortlist</span>
@@ -54,7 +54,7 @@ export function TalentHero() {
           </div>
         </div>
 
-        <div className="talent-hero-visual">
+        <div className="talent-hero-visual reveal reveal-stagger-2">
           <div className="talent-visual-frame">
             <Image
               src="/images/zenovix-agile-team.jpg"
@@ -69,10 +69,10 @@ export function TalentHero() {
             {/* Active Specialism Floating Card */}
             <div className="talent-status-card">
               <span className="card-micro-label">ACTIVE SPECIALISM</span>
-              <strong>SAP IS-U Billing & CRM</strong>
+              <strong>SAP IS-U Billing &amp; CRM</strong>
               <div className="card-pulse-row">
                 <span className="live-indicator"></span>
-                <span>Specialists Deployed & Available</span>
+                <span>Specialists Deployed &amp; Available</span>
               </div>
             </div>
           </div>
@@ -85,7 +85,7 @@ export function TalentHero() {
 export function TalentLogoBand() {
   const logos = ["SAP IS-U", "S/4HANA", "DATA & AI", "CLOUD INFRASTRUCTURE", "ENTERPRISE WORKFORCE"];
   return (
-    <div className="talent-logo-band" aria-label="Core practice disciplines">
+    <div className="talent-logo-band reveal" aria-label="Core practice disciplines">
       <div className="wrap">
         <div className="band-items">
           {logos.map((logo, i) => (
@@ -106,7 +106,7 @@ export function TalentSpecialisms() {
   return (
     <section className="talent-practices-section" id="specialisms" aria-labelledby="practices-heading">
       <div className="wrap">
-        <div className="section-head">
+        <div className="section-head reveal">
           <span className="mono-label">{"// PRACTICE DISCIPLINES"}</span>
           <h2 id="practices-heading">Talent that understands the work before day one.</h2>
           <p className="section-sub">
@@ -115,7 +115,7 @@ export function TalentSpecialisms() {
         </div>
 
         {/* Practice Selection Tabs */}
-        <div className="practice-tabs" role="tablist" aria-label="Talent Practice Areas">
+        <div className="practice-tabs reveal" role="tablist" aria-label="Talent Practice Areas">
           <button
             type="button"
             role="tab"
@@ -123,7 +123,8 @@ export function TalentSpecialisms() {
             className={`practice-tab-btn ${activeTab === "isu" ? "active" : ""}`}
             onClick={() => setActiveTab("isu")}
           >
-            01 / SAP IS-U (Utilities)
+            <span className="tab-pill">DOMAIN</span>
+            <span>SAP IS-U / Utilities</span>
           </button>
           <button
             type="button"
@@ -132,7 +133,8 @@ export function TalentSpecialisms() {
             className={`practice-tab-btn ${activeTab === "ai" ? "active" : ""}`}
             onClick={() => setActiveTab("ai")}
           >
-            02 / AI & Data Practice
+            <span className="tab-pill">MODERN</span>
+            <span>AI &amp; Data Engineering</span>
           </button>
           <button
             type="button"
@@ -141,7 +143,8 @@ export function TalentSpecialisms() {
             className={`practice-tab-btn ${activeTab === "sap" ? "active" : ""}`}
             onClick={() => setActiveTab("sap")}
           >
-            03 / Enterprise SAP
+            <span className="tab-pill">CORE</span>
+            <span>Enterprise SAP</span>
           </button>
           <button
             type="button"
@@ -150,46 +153,36 @@ export function TalentSpecialisms() {
             className={`practice-tab-btn ${activeTab === "it" ? "active" : ""}`}
             onClick={() => setActiveTab("it")}
           >
-            04 / Non-SAP IT & Cloud
+            <span className="tab-pill">ENGINEERING</span>
+            <span>Non-SAP IT</span>
           </button>
         </div>
 
-        {/* Tab 1: SAP IS-U Deep Dive */}
+        {/* Tab 1: SAP IS-U */}
         {activeTab === "isu" && (
-          <div className="practice-detail-panel" role="tabpanel">
+          <div className="practice-detail-panel reveal" role="tabpanel">
             <div className="practice-panel-intro">
-              <span className="panel-kicker">SAP IS-U UTILITIES PRACTICE</span>
-              <h3>SAP IS-U talent for the work that cannot pause.</h3>
+              <span className="panel-kicker">FLAGSHIP SPECIALISM</span>
+              <h3>Deep expertise for India&apos;s power, gas, and water distribution networks.</h3>
               <p>
-                From transformation to billing operations, we place specialists who understand the real-world pressures of utility systems in India.
+                Our consultants bring hands-on experience in tariff structures, billing schemes, smart metering rollouts, and multi-channel customer workflows.
               </p>
             </div>
 
             <div className="roles-grid">
-              <div className="role-box">
-                <h4>Billing & Invoicing</h4>
-                <p>Configuration, validation, rate categories, billing schemes, and exception management.</p>
-              </div>
-              <div className="role-box">
-                <h4>FICA & Collections</h4>
-                <p>Contract accounts receivable, dunning pipelines, installment payments, and GL integration.</p>
-              </div>
-              <div className="role-box">
-                <h4>CRM & Customer Service</h4>
-                <p>Customer care interaction centers, move-in/move-out workflows, and service processes.</p>
-              </div>
-              <div className="role-box">
-                <h4>Device Management</h4>
-                <p>Smart metering, meter reading orders, device installation, replacement, and field workflows.</p>
-              </div>
-              <div className="role-box">
-                <h4>EDM & Energy Analytics</h4>
-                <p>Energy data management, profile settlement, load curves, and real-time consumption insight.</p>
-              </div>
-              <div className="role-box">
-                <h4>Integration & Delivery</h4>
-                <p>ABAP, SAP BTP extensions, middleware interfaces, QA test automation, and programme leadership.</p>
-              </div>
+              {[
+                { title: "Billing & Invoicing", desc: "Tariff rates, billing schemas, budget billing, and cross-system reconciliation." },
+                { title: "Device Management", desc: "Meter reading data imports, AMI integration, device lifecycle, and asset tracking." },
+                { title: "Customer Service (CS / CRM)", desc: "Customer interaction center, contract accounts, disconnections, and payments." },
+                { title: "FICA (Contract Accounts)", desc: "Subledger accounting, dunning runs, payment lots, and banking interfaces." },
+                { title: "Intercompany Data Exchange", desc: "Deregulated market messaging, data sync, and market communication protocols." },
+                { title: "IS-U ABAP & Extensions", desc: "Enhancements, BAdIs, user exits, print workbenches, and S/4HANA utilities conversion." },
+              ].map((role, idx) => (
+                <div key={role.title} className={`role-box reveal reveal-stagger-${(idx % 3) + 1}`}>
+                  <h4>{role.title}</h4>
+                  <p>{role.desc}</p>
+                </div>
+              ))}
             </div>
 
             <div className="panel-action">
@@ -201,47 +194,36 @@ export function TalentSpecialisms() {
           </div>
         )}
 
-        {/* Tab 2: AI & Data Practice Deep Dive */}
+        {/* Tab 2: AI & Data */}
         {activeTab === "ai" && (
-          <div className="practice-detail-panel" role="tabpanel">
+          <div className="practice-detail-panel reveal" role="tabpanel">
             <div className="practice-panel-intro">
-              <span className="panel-kicker">AI & DATA ENGINEERING PRACTICE</span>
-              <h3>Practical AI capability for enterprise-scale ambition.</h3>
+              <span className="panel-kicker">APPLIED CAPABILITY</span>
+              <h3>Engineers who turn data and machine learning into production systems.</h3>
               <p>
-                Build teams that can take AI from promising experiment to secure, useful operations alongside the data foundations that sustain it.
+                From clean data infrastructure to LLM agents and predictive models integrated directly into your existing enterprise stack.
               </p>
             </div>
 
             <div className="roles-grid">
-              <div className="role-box">
-                <h4>AI Engineers</h4>
-                <p>Applied AI, LLM workflows, retrieval-augmented generation (RAG), and model evaluation.</p>
-              </div>
-              <div className="role-box">
-                <h4>ML & MLOps</h4>
-                <p>Model development, deployment pipelines, latency optimization, monitoring, and governance.</p>
-              </div>
-              <div className="role-box">
-                <h4>Data Engineering</h4>
-                <p>Distributed data platforms, ETL pipelines, streaming architectures, and cloud warehousing.</p>
-              </div>
-              <div className="role-box">
-                <h4>Data Science</h4>
-                <p>Statistical forecasting, operations optimization, experimentation, and predictive modeling.</p>
-              </div>
-              <div className="role-box">
-                <h4>Analytics & BI</h4>
-                <p>Enterprise BI dashboards, product analytics, and executive decision-support reporting.</p>
-              </div>
-              <div className="role-box">
-                <h4>AI Leadership</h4>
-                <p>System architects, product leads, responsible AI compliance, and transformation directorship.</p>
-              </div>
+              {[
+                { title: "LLM & GenAI Engineers", desc: "RAG architectures, prompt engineering, agent frameworks, and enterprise fine-tuning." },
+                { title: "Data Engineers", desc: "Databricks, Snowflake, PySpark pipelines, lakehouse architectures, and DBT transformations." },
+                { title: "Computer Vision & OCR", desc: "Document understanding, invoice extraction, defect detection, and edge deployment." },
+                { title: "Predictive Analytics", desc: "Demand forecasting, predictive maintenance, customer churn, and anomaly detection." },
+                { title: "BI & Dashboard Architects", desc: "Power BI, Tableau, executive data models, and automated reporting pipelines." },
+                { title: "AI Governance & MLOps", desc: "Model monitoring, evaluation frameworks, security guardrails, and compliance." },
+              ].map((role, idx) => (
+                <div key={role.title} className={`role-box reveal reveal-stagger-${(idx % 3) + 1}`}>
+                  <h4>{role.title}</h4>
+                  <p>{role.desc}</p>
+                </div>
+              ))}
             </div>
 
             <div className="panel-action">
               <RegisterButton serviceInterest="Talent Deployment" className="btn btn-primary">
-                <span>Discuss Your AI Team</span>
+                <span>Deploy AI &amp; Data Leads</span>
                 <span className="arrow" aria-hidden="true">→</span>
               </RegisterButton>
             </div>
@@ -250,7 +232,7 @@ export function TalentSpecialisms() {
 
         {/* Tab 3: Enterprise SAP */}
         {activeTab === "sap" && (
-          <div className="practice-detail-panel" role="tabpanel">
+          <div className="practice-detail-panel reveal" role="tabpanel">
             <div className="practice-panel-intro">
               <span className="panel-kicker">CORE ENTERPRISE SAP</span>
               <h3>S/4HANA and module specialists for end-to-end ERP excellence.</h3>
@@ -260,30 +242,19 @@ export function TalentSpecialisms() {
             </div>
 
             <div className="roles-grid">
-              <div className="role-box">
-                <h4>S/4HANA Migration Leads</h4>
-                <p>Greenfield, brownfield, and selective data transition architectural specialists.</p>
-              </div>
-              <div className="role-box">
-                <h4>FICO & Treasury</h4>
-                <p>Financial accounting, controlling, cash management, and regulatory reporting.</p>
-              </div>
-              <div className="role-box">
-                <h4>Supply Chain (MM / SD / PP)</h4>
-                <p>Materials management, sales and distribution, production planning, and logistics.</p>
-              </div>
-              <div className="role-box">
-                <h4>ABAP on HANA & BTP</h4>
-                <p>Core Data Services (CDS), RAP/CAP models, Fiori development, and cloud extensions.</p>
-              </div>
-              <div className="role-box">
-                <h4>Basis & Security</h4>
-                <p>System administration, kernel patching, user authorization matrices, and disaster recovery.</p>
-              </div>
-              <div className="role-box">
-                <h4>SuccessFactors</h4>
-                <p>Employee Central, recruiting, onboarding, performance, and workforce analytics.</p>
-              </div>
+              {[
+                { title: "S/4HANA Migration Leads", desc: "Greenfield, brownfield, and selective data transition architectural specialists." },
+                { title: "FICO & Treasury", desc: "Financial accounting, controlling, cash management, and regulatory reporting." },
+                { title: "Supply Chain (MM / SD / PP)", desc: "Materials management, sales and distribution, production planning, and logistics." },
+                { title: "ABAP on HANA & BTP", desc: "Core Data Services (CDS), RAP/CAP models, Fiori development, and cloud extensions." },
+                { title: "Basis & Security", desc: "System administration, kernel patching, user authorization matrices, and disaster recovery." },
+                { title: "SuccessFactors", desc: "Employee Central, recruiting, onboarding, performance, and workforce analytics." },
+              ].map((role, idx) => (
+                <div key={role.title} className={`role-box reveal reveal-stagger-${(idx % 3) + 1}`}>
+                  <h4>{role.title}</h4>
+                  <p>{role.desc}</p>
+                </div>
+              ))}
             </div>
 
             <div className="panel-action">
@@ -297,9 +268,9 @@ export function TalentSpecialisms() {
 
         {/* Tab 4: Non-SAP IT */}
         {activeTab === "it" && (
-          <div className="practice-detail-panel" role="tabpanel">
+          <div className="practice-detail-panel reveal" role="tabpanel">
             <div className="practice-panel-intro">
-              <span className="panel-kicker">INFRASTRUCTURE & ENGINEERING</span>
+              <span className="panel-kicker">INFRASTRUCTURE &amp; ENGINEERING</span>
               <h3>Cloud, cybersecurity, product engineering, and digital platforms.</h3>
               <p>
                 Bridging core enterprise ERP with modern microservices, cloud fabrics, and resilient security perimeters.
@@ -307,22 +278,17 @@ export function TalentSpecialisms() {
             </div>
 
             <div className="roles-grid">
-              <div className="role-box">
-                <h4>Cloud Architects</h4>
-                <p>AWS, Azure, and Google Cloud platform design, cost governance, and multi-region resilience.</p>
-              </div>
-              <div className="role-box">
-                <h4>DevOps & SRE</h4>
-                <p>Kubernetes orchestration, CI/CD pipelines, automated testing, and uptime engineering.</p>
-              </div>
-              <div className="role-box">
-                <h4>Cybersecurity Specialists</h4>
-                <p>SOC analysts, threat intelligence, identity & access governance, and penetration testing.</p>
-              </div>
-              <div className="role-box">
-                <h4>Full-Stack Engineers</h4>
-                <p>Modern React, TypeScript, Next.js, Python, Node, and Go enterprise application developers.</p>
-              </div>
+              {[
+                { title: "Cloud Architects", desc: "AWS, Azure, and Google Cloud platform design, cost governance, and multi-region resilience." },
+                { title: "DevOps & SRE", desc: "Kubernetes orchestration, CI/CD pipelines, automated testing, and uptime engineering." },
+                { title: "Cybersecurity Specialists", desc: "SOC analysts, threat intelligence, identity & access governance, and penetration testing." },
+                { title: "Full-Stack Engineers", desc: "Modern React, TypeScript, Next.js, Python, Node, and Go enterprise application developers." },
+              ].map((role, idx) => (
+                <div key={role.title} className={`role-box reveal reveal-stagger-${(idx % 2) + 1}`}>
+                  <h4>{role.title}</h4>
+                  <p>{role.desc}</p>
+                </div>
+              ))}
             </div>
 
             <div className="panel-action">
@@ -360,15 +326,15 @@ export function TalentDeliveryProcess() {
   return (
     <section className="talent-process-section" id="delivery" aria-labelledby="delivery-heading">
       <div className="wrap">
-        <div className="section-head">
+        <div className="section-head reveal">
           <span className="mono-label">{"// DELIVERY DISCIPLINE"}</span>
           <h2 id="delivery-heading">Less searching. More certainty.</h2>
           <p className="section-sub">A proven model designed to remove friction from enterprise staffing.</p>
         </div>
 
         <div className="process-grid">
-          {steps.map((s) => (
-            <div key={s.num} className="process-step-card">
+          {steps.map((s, idx) => (
+            <div key={s.num} className={`process-step-card reveal reveal-stagger-${idx + 1}`}>
               <span className="process-num">{s.num}</span>
               <h3>{s.title}</h3>
               <p>{s.desc}</p>
@@ -393,7 +359,7 @@ export function TalentIndustries() {
   return (
     <section className="talent-industries-section" id="industries" aria-labelledby="industries-heading">
       <div className="wrap talent-industries-grid">
-        <div className="industries-media">
+        <div className="industries-media reveal">
           <div className="industries-frame">
             <Image
               src="/images/zenovix-data-operations.jpg"
@@ -406,7 +372,7 @@ export function TalentIndustries() {
           </div>
         </div>
 
-        <div className="industries-copy">
+        <div className="industries-copy reveal reveal-stagger-2">
           <span className="mono-label">{"// SECTOR FLUENCY"}</span>
           <h2 id="industries-heading">Where operational complexity meets new possibility.</h2>
           <p className="industries-lead">
@@ -453,14 +419,14 @@ export function TalentFaq() {
   return (
     <section className="talent-faq-section" id="faq" aria-labelledby="faq-heading">
       <div className="wrap">
-        <div className="section-head">
+        <div className="section-head reveal">
           <span className="mono-label">{"// QUESTIONS ANSWERED"}</span>
           <h2 id="faq-heading">What businesses usually ask us.</h2>
         </div>
 
         <div className="faq-list">
           {faqs.map((faq, idx) => (
-            <details key={idx} className="faq-item" open={idx === 0}>
+            <details key={idx} className={`faq-item reveal reveal-stagger-${(idx % 3) + 1}`} open={idx === 0}>
               <summary className="faq-question">
                 <span>{faq.q}</span>
                 <span className="faq-icon" aria-hidden="true">+</span>
@@ -479,7 +445,7 @@ export function TalentFaq() {
 export function TalentEnquiryCta() {
   return (
     <section className="talent-enquiry-section" id="contact" aria-labelledby="enquiry-heading">
-      <div className="wrap talent-enquiry-box">
+      <div className="wrap talent-enquiry-box reveal">
         <div className="enquiry-info">
           <span className="mono-label">{"// GET IN TOUCH"}</span>
           <h2 id="enquiry-heading">Your next critical hire can start here.</h2>
@@ -493,8 +459,8 @@ export function TalentEnquiryCta() {
               <a href="mailto:sales@zenovixtechnologies.com">sales@zenovixtechnologies.com</a>
             </div>
             <div className="contact-detail-row">
-              <strong>Direct Desk:</strong>
-              <a href="tel:+919136224840">+91 91362 24840</a>
+              <strong>Response SLA:</strong>
+              <span>Within 48 hours with candidate profiles</span>
             </div>
             <div className="contact-detail-row">
               <strong>Support:</strong>

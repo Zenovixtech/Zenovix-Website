@@ -53,7 +53,7 @@ export default function CorporateHero() {
           </div>
 
           {/* Technical Specs Strip */}
-          <div className="hero-specs-row">
+          <div className="hero-specs-row reveal">
             <div className="spec-card">
               <span className="spec-label">PRACTICE DOMAINS</span>
               <strong className="spec-value">SAP · AI · CLOUD</strong>
@@ -70,7 +70,7 @@ export default function CorporateHero() {
         </div>
 
         {/* Right Column: Layered Asymmetric Technical Panel */}
-        <div className="hero-panel-col">
+        <div className="hero-panel-col reveal reveal-stagger-2">
           <div className="hero-panel-frame">
             <div className="panel-header-bar">
               <div className="terminal-dots">

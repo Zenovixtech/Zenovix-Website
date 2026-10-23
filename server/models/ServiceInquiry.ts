@@ -24,8 +24,12 @@ export interface ITalentDetails {
   teamSize?: string;
 }
 
+export type TechnologyCategory = 'Services' | 'Expertise' | 'Solutions';
+
 export interface ITechnologyDetails {
-  topic: string;
+  category: TechnologyCategory;
+  topic?: string;
+  scope?: string;
 }
 
 export interface IServiceInquiry extends Document {
@@ -98,9 +102,18 @@ const TalentDetailsSchema = new Schema(
 
 const TechnologyDetailsSchema = new Schema(
   {
-    topic: {
+    category: {
       type: String,
       required: true,
+      enum: ['Services', 'Expertise', 'Solutions'],
+      maxlength: 50,
+    },
+    topic: {
+      type: String,
+      maxlength: 200,
+    },
+    scope: {
+      type: String,
       maxlength: 200,
     },
   },

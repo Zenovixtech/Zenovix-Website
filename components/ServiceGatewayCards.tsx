@@ -39,7 +39,7 @@ export default function ServiceGatewayCards() {
   return (
     <section className="gateway-section" id="services" aria-labelledby="gateway-heading">
       <div className="wrap">
-        <div className="gateway-header">
+        <div className="gateway-header reveal">
           <div className="header-meta">
             <span className="section-label">{"// 02 SERVICE ARCHITECTURE"}</span>
             <span className="header-status">STATUS: ONLINE</span>
@@ -55,8 +55,8 @@ export default function ServiceGatewayCards() {
         </div>
 
         <div className="gateway-grid">
-          {cards.map((card) => (
-            <InteractiveCard key={card.def.id} card={card} />
+          {cards.map((card, i) => (
+            <InteractiveCard key={card.def.id} card={card} index={i} />
           ))}
         </div>
       </div>
@@ -74,9 +74,10 @@ interface CardProps {
     tagline: string;
     metric: string;
   };
+  index?: number;
 }
 
-function InteractiveCard({ card }: CardProps) {
+function InteractiveCard({ card, index = 0 }: CardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0, active: false });
 
@@ -95,7 +96,7 @@ function InteractiveCard({ card }: CardProps) {
   return (
     <div
       ref={cardRef}
-      className="gateway-card"
+      className={`gateway-card reveal reveal-stagger-${(index % 3) + 1}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
