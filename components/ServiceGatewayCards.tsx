@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useRef } from "react";
 import Image from "next/image";
 import TrackingLink from "./TrackingLink";
 import { SERVICES_CONFIG } from "@/lib/services-config";
+import SpotlightCard from "./interactive/SpotlightCard";
+import ServiceCardGrid from "./interactive/ServiceCardGrid";
 
 export default function ServiceGatewayCards() {
   const cards = [
@@ -54,11 +55,11 @@ export default function ServiceGatewayCards() {
           </p>
         </div>
 
-        <div className="gateway-grid">
+        <ServiceCardGrid className="gateway-grid">
           {cards.map((card, i) => (
             <InteractiveCard key={card.def.id} card={card} index={i} />
           ))}
-        </div>
+        </ServiceCardGrid>
       </div>
     </section>
   );
@@ -78,40 +79,13 @@ interface CardProps {
 }
 
 function InteractiveCard({ card, index = 0 }: CardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0, active: false });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setMousePos({ x, y, active: true });
-  };
-
-  const handleMouseLeave = () => {
-    setMousePos((prev) => ({ ...prev, active: false }));
-  };
-
   return (
-    <div
-      ref={cardRef}
-      className={`gateway-card reveal reveal-stagger-${(index % 3) + 1}`}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+    <SpotlightCard
+      className={`reveal reveal-stagger-${(index % 3) + 1}`}
+      glowColor="rgba(56, 189, 248, 0.18)"
+      maxTilt={3.5}
     >
-      {/* Dynamic spotlight overlay on desktop */}
-      {mousePos.active && (
-        <div
-          className="card-spotlight"
-          style={{
-            background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(56, 189, 248, 0.12), transparent 70%)`,
-          }}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Card Visual Header */}
+      {/* Card Visual Header with layered depth */}
       <div className="card-visual-wrapper">
         <Image
           src={card.image}
@@ -158,6 +132,6 @@ function InteractiveCard({ card, index = 0 }: CardProps) {
           </TrackingLink>
         </div>
       </div>
-    </div>
+    </SpotlightCard>
   );
 }

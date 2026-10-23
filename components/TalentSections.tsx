@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import RegisterButton from "./RegisterButton";
 import TrackingLink from "./TrackingLink";
+import InteractivePanel from "./interactive/InteractivePanel";
 
 export function TalentHero() {
   return (
@@ -160,7 +161,7 @@ export function TalentSpecialisms() {
 
         {/* Tab 1: SAP IS-U */}
         {activeTab === "isu" && (
-          <div className="practice-detail-panel reveal" role="tabpanel">
+          <InteractivePanel className="practice-detail-panel reveal" role="tabpanel" keyTrigger={activeTab}>
             <div className="practice-panel-intro">
               <span className="panel-kicker">FLAGSHIP SPECIALISM</span>
               <h3>Deep expertise for India&apos;s power, gas, and water distribution networks.</h3>
@@ -191,12 +192,12 @@ export function TalentSpecialisms() {
                 <span className="arrow" aria-hidden="true">→</span>
               </RegisterButton>
             </div>
-          </div>
+          </InteractivePanel>
         )}
 
         {/* Tab 2: AI & Data */}
         {activeTab === "ai" && (
-          <div className="practice-detail-panel reveal" role="tabpanel">
+          <InteractivePanel className="practice-detail-panel reveal" role="tabpanel" keyTrigger={activeTab}>
             <div className="practice-panel-intro">
               <span className="panel-kicker">APPLIED CAPABILITY</span>
               <h3>Engineers who turn data and machine learning into production systems.</h3>
@@ -227,12 +228,12 @@ export function TalentSpecialisms() {
                 <span className="arrow" aria-hidden="true">→</span>
               </RegisterButton>
             </div>
-          </div>
+          </InteractivePanel>
         )}
 
         {/* Tab 3: Enterprise SAP */}
         {activeTab === "sap" && (
-          <div className="practice-detail-panel reveal" role="tabpanel">
+          <InteractivePanel className="practice-detail-panel reveal" role="tabpanel" keyTrigger={activeTab}>
             <div className="practice-panel-intro">
               <span className="panel-kicker">CORE ENTERPRISE SAP</span>
               <h3>S/4HANA and module specialists for end-to-end ERP excellence.</h3>
@@ -263,12 +264,12 @@ export function TalentSpecialisms() {
                 <span className="arrow" aria-hidden="true">→</span>
               </RegisterButton>
             </div>
-          </div>
+          </InteractivePanel>
         )}
 
         {/* Tab 4: Non-SAP IT */}
         {activeTab === "it" && (
-          <div className="practice-detail-panel reveal" role="tabpanel">
+          <InteractivePanel className="practice-detail-panel reveal" role="tabpanel" keyTrigger={activeTab}>
             <div className="practice-panel-intro">
               <span className="panel-kicker">INFRASTRUCTURE &amp; ENGINEERING</span>
               <h3>Cloud, cybersecurity, product engineering, and digital platforms.</h3>
@@ -297,7 +298,7 @@ export function TalentSpecialisms() {
                 <span className="arrow" aria-hidden="true">→</span>
               </RegisterButton>
             </div>
-          </div>
+          </InteractivePanel>
         )}
       </div>
     </section>

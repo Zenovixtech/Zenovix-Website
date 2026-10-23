@@ -4,6 +4,7 @@ import { useState, useRef, useMemo } from "react";
 import RegisterButton from "./RegisterButton";
 import TrackingLink from "./TrackingLink";
 import InteractiveNetworkHero from "./InteractiveNetworkHero";
+import InteractivePanel from "./interactive/InteractivePanel";
 import {
   TECHNOLOGY_SERVICES_DATA,
   ServiceCategory,
@@ -176,7 +177,11 @@ export function TechnologyServicesExplorer() {
           </div>
 
           {/* Right Column: Detailed Capability Showcase */}
-          <div className="explorer-detail-panel" role="tabpanel">
+          <InteractivePanel
+            className="explorer-detail-panel"
+            role="tabpanel"
+            keyTrigger={`${activeCategory}-${currentItem?.title}`}
+          >
             {currentItem && (
               <>
                 <div className="panel-badge-row">
@@ -203,16 +208,18 @@ export function TechnologyServicesExplorer() {
                   <button
                     ref={askButtonRef}
                     type="button"
-                    className="btn btn-primary"
+                    className="btn btn-primary btn-magnetic"
                     onClick={() => openModal(askButtonRef, "Technology Services", currentItem.title)}
                   >
-                    <span>Ask about {currentItem.title}</span>
-                    <span className="arrow" aria-hidden="true">→</span>
+                    <span className="btn-content-inner">
+                      <span>Ask about {currentItem.title}</span>
+                      <span className="arrow" aria-hidden="true">→</span>
+                    </span>
                   </button>
                 </div>
               </>
             )}
-          </div>
+          </InteractivePanel>
         </div>
       </div>
     </section>

@@ -151,6 +151,67 @@ img {
   color: var(--cyan-soft);
 }
 
+/* 21st.dev inspired Magnetic & Shine Micro-interaction for Major CTAs */
+.btn-magnetic {
+  position: relative;
+  overflow: hidden;
+  transform: translate3d(var(--mag-x, 0px), var(--mag-y, 0px), 0);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background 0.25s ease;
+  will-change: transform;
+}
+
+.btn-magnetic .btn-content-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: inherit;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* Single elegant shine pass */
+.btn-magnetic::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -140%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.btn-magnetic:hover::after,
+.btn-magnetic:focus-visible::after {
+  animation: btnShineSweep 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1 forwards;
+}
+
+@keyframes btnShineSweep {
+  0% {
+    left: -140%;
+  }
+  100% {
+    left: 220%;
+  }
+}
+
+.btn-magnetic:disabled {
+  transform: none !important;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.btn-magnetic:disabled::after {
+  display: none !important;
+}
+
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
@@ -1724,7 +1785,8 @@ footer {
   overflow: hidden;
 }
 
-.network-canvas-wrapper {
+/* 21st.dev inspired WebGL Hero Shader & Core */
+.zenovix-hero-shader-wrapper {
   position: absolute;
   top: 0;
   left: 0;
@@ -1732,6 +1794,60 @@ footer {
   height: 100%;
   pointer-events: none;
   z-index: 1;
+  overflow: hidden;
+}
+
+.zenovix-hero-shader-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.82;
+  mix-blend-mode: screen;
+}
+
+.zenovix-hero-shader-fallback {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      circle at 70% 45%,
+      rgba(55, 216, 255, 0.22) 0%,
+      rgba(47, 125, 246, 0.18) 35%,
+      rgba(16, 41, 74, 0.4) 65%,
+      transparent 80%
+    );
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.zenovix-shader-orbital-rings {
+  position: absolute;
+  right: max(4%, calc(50% - 480px));
+  top: 50%;
+  transform: translateY(-50%);
+  width: 580px;
+  height: 580px;
+  border-radius: 50%;
+  border: 1px dashed rgba(56, 189, 248, 0.14);
+  pointer-events: none;
+  box-shadow: 0 0 60px rgba(55, 216, 255, 0.04);
+}
+
+.zenovix-shader-orbital-rings::after {
+  content: "";
+  position: absolute;
+  inset: 70px;
+  border-radius: 50%;
+  border: 1px solid rgba(56, 189, 248, 0.08);
+}
+
+.network-canvas-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .network-canvas {
@@ -2090,6 +2206,7 @@ footer {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 28px;
+  perspective: 1200px;
 }
 
 .gateway-card {
@@ -2100,20 +2217,89 @@ footer {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.gateway-card:hover {
-  transform: translateY(-6px);
-  border-color: var(--cyan);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.15);
+/* 21st.dev inspired Spotlight & 3D Tilt Card */
+.spotlight-card-3d {
+  transform-style: preserve-3d;
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(var(--card-lift, 0px));
+  will-change: transform;
+  transition: transform 0.15s ease-out, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card-spotlight {
+.spotlight-card-3d:hover {
+  border-color: rgba(55, 216, 255, 0.5);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.75), 0 0 30px rgba(56, 189, 248, 0.2);
+}
+
+.spotlight-card-3d:focus-within {
+  transform: none !important;
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+/* Border glow tracking pointer */
+.spotlight-card-3d::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    300px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+    rgba(55, 216, 255, 0.65),
+    transparent 65%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: var(--spotlight-opacity, 0);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.card-spotlight-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 5;
+  border-radius: inherit;
+  background: radial-gradient(
+    380px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+    var(--glow-color, rgba(56, 189, 248, 0.16)),
+    transparent 70%
+  );
+  opacity: var(--spotlight-opacity, 0);
+  transition: opacity 0.3s ease;
+}
+
+/* Layered parallax depth */
+.spotlight-card-3d .card-image {
+  transform: scale(1.04) translate3d(calc(var(--tilt-y, 0) * 0.9px), calc(var(--tilt-x, 0) * -0.9px), 0);
+  transition: transform 0.22s ease-out;
+}
+
+.spotlight-card-3d .card-visual-badge {
+  transform: translate3d(calc(var(--tilt-y, 0) * 1.4px), calc(var(--tilt-x, 0) * -1.4px), 12px);
+  transition: transform 0.22s ease-out;
+}
+
+.spotlight-card-3d .card-sys-code {
+  transform: translate3d(calc(var(--tilt-y, 0) * 1.1px), calc(var(--tilt-x, 0) * -1.1px), 10px);
+  transition: transform 0.22s ease-out;
+}
+
+/* Arrow micro-interaction */
+.spotlight-card-3d .arrow-icon {
+  display: inline-block;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.spotlight-card-3d:hover .arrow-icon,
+.gateway-card-btn:focus-visible .arrow-icon {
+  transform: translateX(6px);
 }
 
 .card-visual-wrapper {
@@ -2628,6 +2814,76 @@ footer {
   border-color: var(--cyan);
   color: #fff;
   font-weight: 700;
+}
+
+/* 21st.dev inspired Interactive Depth Panels */
+.interactive-depth-panel {
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.interactive-depth-panel:hover {
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.65), 0 0 30px rgba(56, 189, 248, 0.12);
+}
+
+.panel-tech-grid {
+  position: absolute;
+  inset: -12px;
+  background-image:
+    linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 1;
+  transform: translate(var(--grid-shift-x, 0px), var(--grid-shift-y, 0px));
+  transition: transform 0.2s ease-out;
+}
+
+.panel-spotlight-follower {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  border-radius: inherit;
+  background: radial-gradient(
+    450px circle at var(--panel-mouse-x, -500px) var(--panel-mouse-y, -500px),
+    var(--panel-glow, rgba(56, 189, 248, 0.12)),
+    transparent 70%
+  );
+  opacity: var(--panel-spotlight-opacity, 0);
+  transition: opacity 0.3s ease;
+}
+
+.panel-content-layer {
+  position: relative;
+  z-index: 3;
+}
+
+/* Subtle depth movement on supporting visual badges without affecting text */
+.interactive-depth-panel .panel-kicker,
+.interactive-depth-panel .panel-category-tag,
+.interactive-depth-panel .panel-item-num {
+  display: inline-block;
+  transform: translate3d(calc(var(--grid-shift-x, 0px) * 0.4), calc(var(--grid-shift-y, 0px) * 0.4), 0);
+  transition: transform 0.2s ease-out;
+}
+
+/* Perspective entrance for detail panels when selection changes */
+.perspective-panel-entrance {
+  animation: panelPerspectiveEntrance 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes panelPerspectiveEntrance {
+  0% {
+    opacity: 0.65;
+    transform: perspective(1000px) rotateX(1.6deg) translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1000px) rotateX(0deg) translateY(0);
+  }
 }
 
 .practice-detail-panel {
@@ -3583,6 +3839,39 @@ footer {
   }
   .network-canvas-wrapper {
     display: none;
+  }
+  .zenovix-hero-shader-canvas {
+    display: none !important;
+  }
+  .zenovix-hero-shader-fallback {
+    opacity: 0.8 !important;
+  }
+  .spotlight-card-3d,
+  .spotlight-card-3d .card-image,
+  .spotlight-card-3d .card-visual-badge,
+  .spotlight-card-3d .card-sys-code {
+    transform: none !important;
+  }
+  .btn-magnetic {
+    transform: none !important;
+  }
+  .btn-magnetic::after {
+    display: none !important;
+  }
+}
+
+@media (hover: none) {
+  .spotlight-card-3d,
+  .spotlight-card-3d .card-image,
+  .spotlight-card-3d .card-visual-badge,
+  .spotlight-card-3d .card-sys-code {
+    transform: none !important;
+  }
+  .btn-magnetic {
+    transform: none !important;
+  }
+  .btn-magnetic::after {
+    display: none !important;
   }
 }
 
