@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useCallback, FormEvent, ChangeEvent } from "react";
 import {
   ALLOWED_ROLES,
-  SERVICE_INTERESTS,
   ServiceInterest,
   RegistrationFormData,
   FormErrors,
@@ -112,6 +111,8 @@ export default function RegistrationModal({
         const focusables = modalRef.current.querySelectorAll<HTMLElement>(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
         );
+        if (focusables.length === 0) return;
+
         const firstEl = focusables[0];
         const lastEl = focusables[focusables.length - 1];
 
@@ -206,20 +207,16 @@ export default function RegistrationModal({
       nameInputRef.current?.focus();
       return;
     }
-    if (emailErr) {
-      document.getElementById("email")?.focus();
-      return;
-    }
     if (phoneErr) {
       document.getElementById("phone")?.focus();
       return;
     }
-    if (roleErr) {
-      document.getElementById("role")?.focus();
+    if (emailErr) {
+      document.getElementById("email")?.focus();
       return;
     }
-    if (serviceErr) {
-      document.getElementById("serviceInterest")?.focus();
+    if (roleErr) {
+      document.getElementById("role")?.focus();
       return;
     }
 
@@ -262,17 +259,13 @@ export default function RegistrationModal({
           if (errs.role && typeof errs.role === "object" && "_errors" in errs.role) {
             fieldErrors.role = ((errs.role as { _errors: string[] })._errors || [])[0];
           }
-          if (errs.serviceInterest && typeof errs.serviceInterest === "object" && "_errors" in errs.serviceInterest) {
-            fieldErrors.serviceInterest = ((errs.serviceInterest as { _errors: string[] })._errors || [])[0];
-          }
         }
         setErrors(fieldErrors);
 
         if (fieldErrors.fullName) nameInputRef.current?.focus();
-        else if (fieldErrors.email) document.getElementById("email")?.focus();
         else if (fieldErrors.phone) document.getElementById("phone")?.focus();
+        else if (fieldErrors.email) document.getElementById("email")?.focus();
         else if (fieldErrors.role) document.getElementById("role")?.focus();
-        else if (fieldErrors.serviceInterest) document.getElementById("serviceInterest")?.focus();
       } else {
         setErrors((prev) => ({
           ...prev,
@@ -295,31 +288,48 @@ export default function RegistrationModal({
     <div
       className={`modal-backdrop ${isOpen ? "open" : ""}`}
       id="registerModal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modalTitle"
+      role="presentation"
       onClick={handleBackdropClick}
+      aria-hidden={!isOpen}
     >
-      <div className="modal" ref={modalRef}>
-        {!isSuccessView ? (
-          <div id="formView">
-            <div className="modal-head">
-              <div>
+      <div
+        className="modal enquiry-modal"
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+        aria-describedby="modalSubtitle"
+      >
+        {isSuccessView ? (
+          <div className="enquiry-success-view">
+            <div className="enquiry-success-icon" aria-hidden="true">✓</div>
+            <h2 id="modalTitle">Seat reserved successfully.</h2>
+            <p id="modalSubtitle">
+              Your details have been saved. Our masterclass coordinator will send webinar access links
+              and curriculum material shortly.
+            </p>
+            <button
+              type="button"
+              className="btn btn-primary"
+              id="doneButton"
+              onClick={handleClose}
+              autoFocus
+            >
+              Close Window
+            </button>
+          </div>
+        ) : (
+          <div className="enquiry-modal-content">
+            {/* Modal Header without cross button */}
+            <div className="modal-head enquiry-head">
+              <div className="enquiry-head-copy">
+                <span className="mono-label enquiry-badge">{"// LEARNING HUB REGISTRATION"}</span>
                 <h2 id="modalTitle">Reserve your seat</h2>
-                <p>Enter your details to reserve your seat for the live workshop.</p>
+                <p id="modalSubtitle">Enter your details to reserve your seat for the live masterclass.</p>
               </div>
-              <button
-                type="button"
-                className="close"
-                id="closeModal"
-                aria-label="Close form"
-                onClick={handleClose}
-              >
-                ×
-              </button>
             </div>
 
-            <form id="leadForm" noValidate onSubmit={handleSubmit}>
+            <form id="leadForm" noValidate onSubmit={handleSubmit} className="enquiry-form-grid">
               {/* Invisible Honeypot Field */}
               <div className="hp-field" aria-hidden="true">
                 <label htmlFor="website_hp">Leave empty</label>
@@ -335,144 +345,124 @@ export default function RegistrationModal({
               </div>
 
               {errors.form && (
-                <p className="error" id="formError" aria-live="polite" style={{ marginBottom: "10px" }}>
+                <div className="enquiry-form-error-banner" role="alert" aria-live="polite">
                   {errors.form}
-                </p>
+                </div>
               )}
 
-              <div className="field">
-                <label htmlFor="fullName">Full name *</label>
-                <input
-                  id="fullName"
-                  name="fullName"
-                  ref={nameInputRef}
-                  autoComplete="name"
-                  minLength={3}
-                  maxLength={100}
-                  required
-                  placeholder="Enter your full name"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  aria-invalid={!!errors.fullName}
-                  aria-describedby={errors.fullName ? "fullNameError" : undefined}
-                />
-                <p className="error" id="fullNameError" aria-live="polite">
-                  {errors.fullName}
-                </p>
+              {/* Row 1: Full name & Mobile number */}
+              <div className="enquiry-two-col">
+                <div className="enquiry-field">
+                  <label htmlFor="fullName">Full name *</label>
+                  <input
+                    id="fullName"
+                    name="fullName"
+                    ref={nameInputRef}
+                    autoComplete="name"
+                    minLength={3}
+                    maxLength={100}
+                    required
+                    placeholder="e.g. Priya Sharma"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    aria-invalid={!!errors.fullName}
+                    aria-describedby={errors.fullName ? "fullNameError" : undefined}
+                  />
+                  {errors.fullName && (
+                    <span className="field-error" id="fullNameError" aria-live="polite">
+                      {errors.fullName}
+                    </span>
+                  )}
+                </div>
+
+                <div className="enquiry-field">
+                  <label htmlFor="phone">Mobile number *</label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    inputMode="numeric"
+                    minLength={10}
+                    maxLength={10}
+                    pattern="[6-9][0-9]{9}"
+                    required
+                    placeholder="e.g. 9876543210"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    aria-invalid={!!errors.phone}
+                    aria-describedby={errors.phone ? "phoneError" : undefined}
+                  />
+                  {errors.phone && (
+                    <span className="field-error" id="phoneError" aria-live="polite">
+                      {errors.phone}
+                    </span>
+                  )}
+                </div>
               </div>
 
-              <div className="field">
-                <label htmlFor="email">Email *</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  inputMode="email"
-                  maxLength={254}
-                  required
-                  placeholder="name@example.com"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? "emailError" : undefined}
-                />
-                <p className="error" id="emailError" aria-live="polite">
-                  {errors.email}
-                </p>
+              {/* Row 2: Work email & Your role */}
+              <div className="enquiry-two-col">
+                <div className="enquiry-field">
+                  <label htmlFor="email">Work email *</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    inputMode="email"
+                    maxLength={254}
+                    required
+                    placeholder="e.g. priya.sharma@company.com"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "emailError" : undefined}
+                  />
+                  {errors.email && (
+                    <span className="field-error" id="emailError" aria-live="polite">
+                      {errors.email}
+                    </span>
+                  )}
+                </div>
+
+                <div className="enquiry-field">
+                  <label htmlFor="role">Your role *</label>
+                  <select
+                    id="role"
+                    name="role"
+                    required
+                    value={formData.role}
+                    onChange={handleInputChange}
+                    aria-invalid={!!errors.role}
+                    aria-describedby={errors.role ? "roleError" : undefined}
+                  >
+                    <option value="">Select your role</option>
+                    {ALLOWED_ROLES.map((r) => (
+                      <option key={r} value={r}>
+                        {r}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.role && (
+                    <span className="field-error" id="roleError" aria-live="polite">
+                      {errors.role}
+                    </span>
+                  )}
+                </div>
               </div>
 
-              <div className="field">
-                <label htmlFor="phone">Mobile number *</label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  autoComplete="tel"
-                  inputMode="numeric"
-                  minLength={10}
-                  maxLength={10}
-                  pattern="[6-9][0-9]{9}"
-                  required
-                  placeholder="9876543210"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  aria-invalid={!!errors.phone}
-                  aria-describedby={errors.phone ? "phoneError" : undefined}
-                />
-                <p className="error" id="phoneError" aria-live="polite">
-                  {errors.phone}
-                </p>
-              </div>
-
-              <div className="field">
-                <label htmlFor="serviceInterest">Which service are you interested in? *</label>
-                <select
-                  id="serviceInterest"
-                  name="serviceInterest"
-                  required
-                  value={formData.serviceInterest}
-                  onChange={handleInputChange}
-                  aria-invalid={!!errors.serviceInterest}
-                  aria-describedby={errors.serviceInterest ? "serviceInterestError" : undefined}
+              {/* Submit Row */}
+              <div className="enquiry-submit-row">
+                <button
+                  className="btn btn-primary enquiry-submit-btn"
+                  type="submit"
+                  disabled={isSubmitting}
                 >
-                  <option value="">Select a service</option>
-                  {SERVICE_INTERESTS.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-                <p className="error" id="serviceInterestError" aria-live="polite">
-                  {errors.serviceInterest}
-                </p>
+                  {isSubmitting ? "Processing..." : "Reserve my seat"}
+                </button>
               </div>
-
-              <div className="field">
-                <label htmlFor="role">Your role *</label>
-                <select
-                  id="role"
-                  name="role"
-                  required
-                  value={formData.role}
-                  onChange={handleInputChange}
-                  aria-invalid={!!errors.role}
-                  aria-describedby={errors.role ? "roleError" : undefined}
-                >
-                  <option value="">Select one</option>
-                  {ALLOWED_ROLES.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-                <p className="error" id="roleError" aria-live="polite">
-                  {errors.role}
-                </p>
-              </div>
-
-              <button
-                className="btn btn-primary"
-                style={{ width: "100%", marginTop: "8px" }}
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Processing..." : "Reserve my seat"}
-              </button>
             </form>
-          </div>
-        ) : (
-          <div className="success show" id="successView">
-            <div className="success-icon">✓</div>
-            <h2>Submission successful</h2>
-            <p>Your details have been saved. Our team will be in touch shortly.</p>
-            <button
-              className="btn btn-primary"
-              id="doneButton"
-              onClick={handleClose}
-            >
-              Done
-            </button>
           </div>
         )}
       </div>

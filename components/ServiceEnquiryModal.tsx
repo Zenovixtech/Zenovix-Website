@@ -203,31 +203,6 @@ export default function ServiceEnquiryModal({
     }
   };
 
-  // Service change warning logic
-  const handleChangeService = () => {
-    const hasTalentData =
-      mode === "talent" &&
-      (talentFields.specialism !== "" ||
-        talentFields.hiringModel !== "" ||
-        talentFields.teamSize.trim() !== "" ||
-        talentFields.message.trim() !== "");
-
-    const hasTechnologyData =
-      mode === "technology" &&
-      ((technologyFields.topic !== "" && technologyFields.topic !== initialTopic) ||
-        technologyFields.scope.trim() !== "" ||
-        technologyFields.message.trim() !== "");
-
-    if (hasTalentData || hasTechnologyData) {
-      const confirmChange = window.confirm(
-        "Changing service will clear your service-specific requirements. Would you like to continue?"
-      );
-      if (!confirmChange) return;
-    }
-
-    setErrors({});
-    setMode("select");
-  };
 
   // Field change handlers that clear field-specific errors
   const handleCommonChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -499,31 +474,10 @@ export default function ServiceEnquiryModal({
             {/* Modal Header */}
             <div className="modal-head enquiry-head">
               <div className="enquiry-head-copy">
-                <div className="enquiry-badge-row">
-                  <span className="mono-label enquiry-badge">{headerMeta.badge}</span>
-                  {mode !== "select" && (
-                    <button
-                      type="button"
-                      className="service-switch-link"
-                      onClick={handleChangeService}
-                      title="Switch to another service"
-                    >
-                      ← Change Service
-                    </button>
-                  )}
-                </div>
+                <span className="mono-label enquiry-badge">{headerMeta.badge}</span>
                 <h2 id="enquiryModalTitle">{headerMeta.title}</h2>
                 <p id="enquiryModalSubtitle">{headerMeta.subtitle}</p>
               </div>
-
-              <button
-                type="button"
-                className="modal-close"
-                onClick={handleClose}
-                aria-label="Close modal window"
-              >
-                &times;
-              </button>
             </div>
 
             {/* General Server/Validation Error Banner */}
