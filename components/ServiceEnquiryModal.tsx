@@ -10,6 +10,8 @@ import {
   validateEnquiryFullName,
   validateCompanyName,
   validateWorkEmail,
+  validateOptionalPhone,
+  normalizePhoneForSubmission,
   validateTalentSpecialism,
   validateTalentHiringModel,
   validateTeamSize,
@@ -29,6 +31,7 @@ export interface CommonEnquiryFields {
   fullName: string;
   companyName: string;
   workEmail: string;
+  phone: string;
 }
 
 interface ServiceEnquiryModalProps {
@@ -56,11 +59,12 @@ export default function ServiceEnquiryModal({
 
   const [mode, setMode] = useState<EnquiryModalMode>(initialMode);
 
-  // Common Fields (Phone removed per requirements)
+  // Common Fields
   const [commonFields, setCommonFields] = useState<CommonEnquiryFields>({
     fullName: initialCommonFields?.fullName || "",
     companyName: initialCommonFields?.companyName || "",
     workEmail: initialCommonFields?.workEmail || "",
+    phone: initialCommonFields?.phone || "",
   });
 
   // Talent Specific Fields
@@ -273,11 +277,13 @@ export default function ServiceEnquiryModal({
     const nameErr = validateEnquiryFullName(commonFields.fullName);
     const companyErr = validateCompanyName(commonFields.companyName);
     const emailErr = validateWorkEmail(commonFields.workEmail);
+    const phoneErr = validateOptionalPhone(commonFields.phone);
 
     const newErrors: EnquiryFormErrors = {
       fullName: nameErr || undefined,
       companyName: companyErr || undefined,
       workEmail: emailErr || undefined,
+      phone: phoneErr || undefined,
     };
 
     // 2. Service-specific validation
@@ -317,6 +323,10 @@ export default function ServiceEnquiryModal({
         document.getElementById("enquiryWorkEmail")?.focus();
         return;
       }
+      if (newErrors.phone) {
+        document.getElementById("enquiryPhone")?.focus();
+        return;
+      }
       if (mode === "talent") {
         if (newErrors.specialism) {
           document.getElementById("enquirySpecialism")?.focus();
@@ -352,6 +362,8 @@ export default function ServiceEnquiryModal({
     setErrors({});
 
     try {
+      const normalizedPhone = normalizePhoneForSubmission(commonFields.phone);
+
       const payload =
         mode === "talent"
           ? {
@@ -359,6 +371,7 @@ export default function ServiceEnquiryModal({
               fullName: commonFields.fullName.trim().replace(/\s+/g, " "),
               companyName: commonFields.companyName.trim().replace(/\s+/g, " "),
               workEmail: commonFields.workEmail.trim().toLowerCase(),
+              phone: normalizedPhone,
               message: talentFields.message.trim(),
               talentDetails: {
                 specialism: talentFields.specialism as TalentSpecialism,
@@ -372,6 +385,7 @@ export default function ServiceEnquiryModal({
               fullName: commonFields.fullName.trim().replace(/\s+/g, " "),
               companyName: commonFields.companyName.trim().replace(/\s+/g, " "),
               workEmail: commonFields.workEmail.trim().toLowerCase(),
+              phone: normalizedPhone,
               message: technologyFields.message.trim(),
               technologyDetails: {
                 category: technologyFields.category,
@@ -390,6 +404,7 @@ export default function ServiceEnquiryModal({
           fullName: "",
           companyName: "",
           workEmail: "",
+          phone: "",
         });
         setTalentFields({
           specialism: "",
@@ -531,6 +546,7 @@ export default function ServiceEnquiryModal({
                     onSelectLearningHub({
                       fullName: commonFields.fullName,
                       email: commonFields.workEmail,
+                      phone: commonFields.phone,
                     });
                   }}
                 >
@@ -641,26 +657,50 @@ export default function ServiceEnquiryModal({
                   </div>
                 </div>
 
-                {/* Common Row 2: Work email (Full width, phone removed) */}
-                <div className="enquiry-field">
-                  <label htmlFor="enquiryWorkEmail">Work email *</label>
-                  <input
-                    type="email"
-                    id="enquiryWorkEmail"
-                    name="workEmail"
-                    required
-                    autoComplete="email"
-                    placeholder="e.g. priya.sharma@company.com"
-                    value={commonFields.workEmail}
-                    onChange={handleCommonChange}
-                    aria-invalid={!!errors.workEmail}
-                    aria-describedby={errors.workEmail ? "workEmailErr" : undefined}
-                  />
-                  {errors.workEmail && (
-                    <span className="field-error" id="workEmailErr" aria-live="polite">
-                      {errors.workEmail}
-                    </span>
-                  )}
+                {/* Common Row 2: Work email & Mobile number */}
+                <div className="enquiry-two-col">
+                  <div className="enquiry-field">
+                    <label htmlFor="enquiryWorkEmail">Work email *</label>
+                    <input
+                      type="email"
+                      id="enquiryWorkEmail"
+                      name="workEmail"
+                      required
+                      autoComplete="email"
+                      placeholder="e.g. priya.sharma@company.com"
+                      value={commonFields.workEmail}
+                      onChange={handleCommonChange}
+                      aria-invalid={!!errors.workEmail}
+                      aria-describedby={errors.workEmail ? "workEmailErr" : undefined}
+                    />
+                    {errors.workEmail && (
+                      <span className="field-error" id="workEmailErr" aria-live="polite">
+                        {errors.workEmail}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="enquiry-field">
+                    <label htmlFor="enquiryPhone">
+                      Mobile number <small>(optional)</small>
+                    </label>
+                    <input
+                      type="tel"
+                      id="enquiryPhone"
+                      name="phone"
+                      autoComplete="tel"
+                      placeholder="e.g. 9876543210"
+                      value={commonFields.phone}
+                      onChange={handleCommonChange}
+                      aria-invalid={!!errors.phone}
+                      aria-describedby={errors.phone ? "phoneErr" : undefined}
+                    />
+                    {errors.phone && (
+                      <span className="field-error" id="phoneErr" aria-live="polite">
+                        {errors.phone}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* TALENT SPECIFIC FIELDS */}

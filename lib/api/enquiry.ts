@@ -18,6 +18,7 @@ export interface TalentEnquiryFormData {
   fullName: string;
   companyName: string;
   workEmail: string;
+  phone: string;
   specialism: string;
   hiringModel: string;
   teamSize: string;
@@ -29,6 +30,7 @@ export interface TechnologyEnquiryFormData {
   fullName: string;
   companyName: string;
   workEmail: string;
+  phone: string;
   category: TechnologyCategory | '';
   topic: string;
   scope: string;
