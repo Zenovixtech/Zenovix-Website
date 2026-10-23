@@ -5,10 +5,22 @@ import Image from "next/image";
 import RegisterButton from "./RegisterButton";
 import TrackingLink from "./TrackingLink";
 import InteractivePanel from "./interactive/InteractivePanel";
+import InteractiveNetworkHero from "./InteractiveNetworkHero";
 
 export function TalentHero() {
   return (
     <section className="talent-hero-section" aria-labelledby="talent-hero-heading">
+      {/* Dynamic network particle canvas background */}
+      <InteractiveNetworkHero />
+
+      {/* Grid overlay decorations */}
+      <div className="hero-grid-lines" aria-hidden="true">
+        <div className="grid-line horizontal top"></div>
+        <div className="grid-line horizontal bottom"></div>
+        <div className="grid-line vertical left"></div>
+        <div className="grid-line vertical right"></div>
+      </div>
+
       <div className="wrap talent-hero-grid">
         <div className="talent-hero-copy">
           <div className="hero-status-strip">

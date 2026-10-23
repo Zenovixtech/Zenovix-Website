@@ -2443,12 +2443,16 @@ footer {
    TALENT DEPLOYMENT SECTION STYLES
    ========================================================================== */
 .talent-hero-section {
+  position: relative;
   padding: 110px 0 80px;
   background: radial-gradient(circle at 60% 20%, #0c1a2f 0%, #071326 60%, #030712 100%);
   color: #fff;
+  overflow: hidden;
 }
 
 .talent-hero-grid {
+  position: relative;
+  z-index: 3;
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
   gap: 50px;
