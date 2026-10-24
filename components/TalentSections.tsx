@@ -437,14 +437,14 @@ export function TalentFaq() {
           <h2 id="faq-heading">What businesses usually ask us.</h2>
         </div>
 
-        <div className="faq-list">
+        <div className="talent-faq-list">
           {faqs.map((faq, idx) => (
-            <details key={idx} className={`faq-item reveal reveal-stagger-${(idx % 3) + 1}`} open={idx === 0}>
-              <summary className="faq-question">
+            <details key={idx} className={`talent-faq-item reveal reveal-stagger-${(idx % 3) + 1}`} open={idx === 0}>
+              <summary className="talent-faq-question">
                 <span>{faq.q}</span>
-                <span className="faq-icon" aria-hidden="true">+</span>
+                <span className="talent-faq-icon" aria-hidden="true">+</span>
               </summary>
-              <div className="faq-answer">
+              <div className="talent-faq-answer">
                 <p>{faq.a}</p>
               </div>
             </details>
